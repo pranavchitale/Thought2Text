@@ -1,0 +1,690 @@
+File type = "ooTextFile"
+Object class = "TextGrid"
+
+xmin = 0 
+xmax = 63.2387755102 
+tiers? <exists> 
+size = 1 
+item []: 
+    item [1]:
+        class = "IntervalTier" 
+        name = "word" 
+        xmin = 0 
+        xmax = 63.2387755102 
+        intervals: size = 169 
+        intervals [1]:
+            xmin = 0 
+            xmax = 0.6138948710487724 
+            text = "" 
+        intervals [2]:
+            xmin = 0.6138948710487724 
+            xmax = 0.7788677785436237 
+            text = "EVERY" 
+        intervals [3]:
+            xmin = 0.7788677785436237 
+            xmax = 1.20975056689 
+            text = "MORNING" 
+        intervals [4]:
+            xmin = 1.20975056689 
+            xmax = 1.26961451247 
+            text = "sp" 
+        intervals [5]:
+            xmin = 1.26961451247 
+            xmax = 1.4578637300695216 
+            text = "I" 
+        intervals [6]:
+            xmin = 1.4578637300695216 
+            xmax = 1.7393845591751003 
+            text = "WOKE" 
+        intervals [7]:
+            xmin = 1.7393845591751003 
+            xmax = 1.9139649759446897 
+            text = "UP" 
+        intervals [8]:
+            xmin = 1.9139649759446897 
+            xmax = 2.03786848073 
+            text = "WITH" 
+        intervals [9]:
+            xmin = 2.03786848073 
+            xmax = 2.088830336754763 
+            text = "sp" 
+        intervals [10]:
+            xmin = 2.088830336754763 
+            xmax = 2.3450040434068513 
+            text = "TWO" 
+        intervals [11]:
+            xmin = 2.3450040434068513 
+            xmax = 2.8640431553949934 
+            text = "GIANT" 
+        intervals [12]:
+            xmin = 2.8640431553949934 
+            xmax = 3.3788972913324757 
+            text = "ANIMALS" 
+        intervals [13]:
+            xmin = 3.3788972913324757 
+            xmax = 3.91360544218 
+            text = "NUZZLING" 
+        intervals [14]:
+            xmin = 3.91360544218 
+            xmax = 4.07324263039 
+            text = "ME" 
+        intervals [15]:
+            xmin = 4.07324263039 
+            xmax = 4.392430499165719 
+            text = "sp" 
+        intervals [16]:
+            xmin = 4.392430499165719 
+            xmax = 4.914984295421589 
+            text = "PANTING" 
+        intervals [17]:
+            xmin = 4.914984295421589 
+            xmax = 5.0774478575926505 
+            text = "IN" 
+        intervals [18]:
+            xmin = 5.0774478575926505 
+            xmax = 5.2287498009886 
+            text = "MY" 
+        intervals [19]:
+            xmin = 5.2287498009886 
+            xmax = 5.78695750635162 
+            text = "FACE" 
+        intervals [20]:
+            xmin = 5.78695750635162 
+            xmax = 6.15425660139036 
+            text = "sp" 
+        intervals [21]:
+            xmin = 6.15425660139036 
+            xmax = 6.841933811963566 
+            text = "DEMANDING" 
+        intervals [22]:
+            xmin = 6.841933811963566 
+            xmax = 6.954790179578577 
+            text = "TO" 
+        intervals [23]:
+            xmin = 6.954790179578577 
+            xmax = 7.056484928418478 
+            text = "BE" 
+        intervals [24]:
+            xmin = 7.056484928418478 
+            xmax = 7.563542692976589 
+            text = "WALKED" 
+        intervals [25]:
+            xmin = 7.563542692976589 
+            xmax = 9.09183673469 
+            text = "sp" 
+        intervals [26]:
+            xmin = 9.09183673469 
+            xmax = 9.161993558828737 
+            text = "I" 
+        intervals [27]:
+            xmin = 9.161993558828737 
+            xmax = 9.29138321995 
+            text = "WOULD" 
+        intervals [28]:
+            xmin = 9.29138321995 
+            xmax = 9.545706078826464 
+            text = "WALK" 
+        intervals [29]:
+            xmin = 9.545706078826464 
+            xmax = 9.88004535147 
+            text = "THEM" 
+        intervals [30]:
+            xmin = 9.88004535147 
+            xmax = 10.388874948788281 
+            text = "sp" 
+        intervals [31]:
+            xmin = 10.388874948788281 
+            xmax = 10.71910726943362 
+            text = "AND" 
+        intervals [32]:
+            xmin = 10.71910726943362 
+            xmax = 11.0174603175 
+            text = "UPON" 
+        intervals [33]:
+            xmin = 11.0174603175 
+            xmax = 11.1471655329 
+            text = "MY" 
+        intervals [34]:
+            xmin = 11.1471655329 
+            xmax = 11.596242892376106 
+            text = "RETURN" 
+        intervals [35]:
+            xmin = 11.596242892376106 
+            xmax = 11.8256235828 
+            text = "I'D" 
+        intervals [36]:
+            xmin = 11.8256235828 
+            xmax = 12.0850340136 
+            text = "CHECK" 
+        intervals [37]:
+            xmin = 12.0850340136 
+            xmax = 12.161754456319839 
+            text = "THE" 
+        intervals [38]:
+            xmin = 12.161754456319839 
+            xmax = 12.5439909297 
+            text = "PHONE" 
+        intervals [39]:
+            xmin = 12.5439909297 
+            xmax = 12.91629171751405 
+            text = "sp" 
+        intervals [40]:
+            xmin = 12.91629171751405 
+            xmax = 13.389879860062509 
+            text = "HOPING" 
+        intervals [41]:
+            xmin = 13.389879860062509 
+            xmax = 13.448378156862539 
+            text = "sp" 
+        intervals [42]:
+            xmin = 13.448378156862539 
+            xmax = 13.52763391381742 
+            text = "I" 
+        intervals [43]:
+            xmin = 13.52763391381742 
+            xmax = 13.64742273397488 
+            text = "HAD" 
+        intervals [44]:
+            xmin = 13.64742273397488 
+            xmax = 14.015395891265399 
+            text = "SOMEHOW" 
+        intervals [45]:
+            xmin = 14.015395891265399 
+            xmax = 14.2900226757 
+            text = "MISSED" 
+        intervals [46]:
+            xmin = 14.2900226757 
+            xmax = 14.407680478014434 
+            text = "MY" 
+        intervals [47]:
+            xmin = 14.407680478014434 
+            xmax = 14.73952036878261 
+            text = "WIFE'S" 
+        intervals [48]:
+            xmin = 14.73952036878261 
+            xmax = 15.030124810950507 
+            text = "CALL" 
+        intervals [49]:
+            xmin = 15.030124810950507 
+            xmax = 15.384668561054363 
+            text = "SAYING" 
+        intervals [50]:
+            xmin = 15.384668561054363 
+            xmax = 15.516761489312497 
+            text = "THAT" 
+        intervals [51]:
+            xmin = 15.516761489312497 
+            xmax = 15.696512734413961 
+            text = "SHE" 
+        intervals [52]:
+            xmin = 15.696512734413961 
+            xmax = 15.783316658697878 
+            text = "HAD" 
+        intervals [53]:
+            xmin = 15.783316658697878 
+            xmax = 16.107126111100165 
+            text = "CHANGED" 
+        intervals [54]:
+            xmin = 16.107126111100165 
+            xmax = 16.1557823129 
+            text = "HER" 
+        intervals [55]:
+            xmin = 16.1557823129 
+            xmax = 16.51466778951956 
+            text = "MIND" 
+        intervals [56]:
+            xmin = 16.51466778951956 
+            xmax = 16.5947845805 
+            text = "AND" 
+        intervals [57]:
+            xmin = 16.5947845805 
+            xmax = 16.70935461226681 
+            text = "WAS" 
+        intervals [58]:
+            xmin = 16.70935461226681 
+            xmax = 16.993877551 
+            text = "MOVING" 
+        intervals [59]:
+            xmin = 16.993877551 
+            xmax = 17.3131519274 
+            text = "BACK" 
+        intervals [60]:
+            xmin = 17.3131519274 
+            xmax = 18.843945165858127 
+            text = "sp" 
+        intervals [61]:
+            xmin = 18.843945165858127 
+            xmax = 19.0292517007 
+            text = "SHE" 
+        intervals [62]:
+            xmin = 19.0292517007 
+            xmax = 19.279733114412835 
+            text = "NEVER" 
+        intervals [63]:
+            xmin = 19.279733114412835 
+            xmax = 19.45571027584978 
+            text = "DID" 
+        intervals [64]:
+            xmin = 19.45571027584978 
+            xmax = 21.8428571429 
+            text = "sp" 
+        intervals [65]:
+            xmin = 21.8428571429 
+            xmax = 21.9426303855 
+            text = "I" 
+        intervals [66]:
+            xmin = 21.9426303855 
+            xmax = 22.2120181406 
+            text = "TRIED" 
+        intervals [67]:
+            xmin = 22.2120181406 
+            xmax = 22.30597195490413 
+            text = "TO" 
+        intervals [68]:
+            xmin = 22.30597195490413 
+            xmax = 22.576783478990883 
+            text = "CARRY" 
+        intervals [69]:
+            xmin = 22.576783478990883 
+            xmax = 22.88625833948137 
+            text = "ON" 
+        intervals [70]:
+            xmin = 22.88625833948137 
+            xmax = 23.75012531224947 
+            text = "sp" 
+        intervals [71]:
+            xmin = 23.75012531224947 
+            xmax = 23.844477403862424 
+            text = "I" 
+        intervals [72]:
+            xmin = 23.844477403862424 
+            xmax = 24.067148340068993 
+            text = "BOUGHT" 
+        intervals [73]:
+            xmin = 24.067148340068993 
+            xmax = 24.66064401747205 
+            text = "GROCERIES" 
+        intervals [74]:
+            xmin = 24.66064401747205 
+            xmax = 25.2551020408 
+            text = "sp" 
+        intervals [75]:
+            xmin = 25.2551020408 
+            xmax = 25.484620955086704 
+            text = "SAID" 
+        intervals [76]:
+            xmin = 25.484620955086704 
+            xmax = 25.9934240363 
+            text = "HELLO" 
+        intervals [77]:
+            xmin = 25.9934240363 
+            xmax = 26.133106576 
+            text = "TO" 
+        intervals [78]:
+            xmin = 26.133106576 
+            xmax = 26.2328798186 
+            text = "THE" 
+        intervals [79]:
+            xmin = 26.2328798186 
+            xmax = 26.78256690662296 
+            text = "NEIGHBORS" 
+        intervals [80]:
+            xmin = 26.78256690662296 
+            xmax = 28.340966673326122 
+            text = "sp" 
+        intervals [81]:
+            xmin = 28.340966673326122 
+            xmax = 28.439092848603593 
+            text = "I" 
+        intervals [82]:
+            xmin = 28.439092848603593 
+            xmax = 28.5875283447 
+            text = "CAN" 
+        intervals [83]:
+            xmin = 28.5875283447 
+            xmax = 28.839086359693948 
+            text = "SEE" 
+        intervals [84]:
+            xmin = 28.839086359693948 
+            xmax = 29.1263038549 
+            text = "NOW" 
+        intervals [85]:
+            xmin = 29.1263038549 
+            xmax = 29.346802012235358 
+            text = "THAT" 
+        intervals [86]:
+            xmin = 29.346802012235358 
+            xmax = 29.461911564003163 
+            text = "I" 
+        intervals [87]:
+            xmin = 29.461911564003163 
+            xmax = 29.6950113379 
+            text = "WAS" 
+        intervals [88]:
+            xmin = 29.6950113379 
+            xmax = 29.7648526077 
+            text = "IN" 
+        intervals [89]:
+            xmin = 29.7648526077 
+            xmax = 30.28934107125777 
+            text = "SHOCK" 
+        intervals [90]:
+            xmin = 30.28934107125777 
+            xmax = 31.614890264880206 
+            text = "sp" 
+        intervals [91]:
+            xmin = 31.614890264880206 
+            xmax = 31.964957545921845 
+            text = "PRETENDING" 
+        intervals [92]:
+            xmin = 31.964957545921845 
+            xmax = 32.3888888889 
+            text = "EVERYTHING" 
+        intervals [93]:
+            xmin = 32.3888888889 
+            xmax = 32.52135541472884 
+            text = "WOULD" 
+        intervals [94]:
+            xmin = 32.52135541472884 
+            xmax = 32.63080384099986 
+            text = "BE" 
+        intervals [95]:
+            xmin = 32.63080384099986 
+            xmax = 33.0972789116 
+            text = "OK" 
+        intervals [96]:
+            xmin = 33.0972789116 
+            xmax = 36.3199547483 
+            text = "sp" 
+        intervals [97]:
+            xmin = 36.33193786953505 
+            xmax = 36.42944279934456 
+            text = "THE" 
+        intervals [98]:
+            xmin = 36.42944279934456 
+            xmax = 36.780085527697985 
+            text = "HOUSE" 
+        intervals [99]:
+            xmin = 36.780085527697985 
+            xmax = 37.60993573122898 
+            text = "DETERIORATED" 
+        intervals [100]:
+            xmin = 37.60993573122898 
+            xmax = 38.574829932 
+            text = "sp" 
+        intervals [101]:
+            xmin = 38.574829932 
+            xmax = 38.6346938776 
+            text = "THE" 
+        intervals [102]:
+            xmin = 38.6346938776 
+            xmax = 39.00319737900156 
+            text = "LAUNDRY" 
+        intervals [103]:
+            xmin = 39.00319737900156 
+            xmax = 39.39873329391343 
+            text = "HAMPER" 
+        intervals [104]:
+            xmin = 39.39873329391343 
+            xmax = 40.21333471606939 
+            text = "OVERFLOWED" 
+        intervals [105]:
+            xmin = 40.21333471606939 
+            xmax = 40.775965728569886 
+            text = "sp" 
+        intervals [106]:
+            xmin = 40.775965728569886 
+            xmax = 41.2487528345 
+            text = "BAGS" 
+        intervals [107]:
+            xmin = 41.2487528345 
+            xmax = 41.3285714286 
+            text = "OF" 
+        intervals [108]:
+            xmin = 41.3285714286 
+            xmax = 41.91396646005173 
+            text = "TRASH" 
+        intervals [109]:
+            xmin = 41.91396646005173 
+            xmax = 42.3961451247 
+            text = "CLUSTERED" 
+        intervals [110]:
+            xmin = 42.3961451247 
+            xmax = 42.4659863946 
+            text = "IN" 
+        intervals [111]:
+            xmin = 42.4659863946 
+            xmax = 42.56423088245601 
+            text = "THE" 
+        intervals [112]:
+            xmin = 42.56423088245601 
+            xmax = 42.9548752834 
+            text = "KITCHEN" 
+        intervals [113]:
+            xmin = 42.9548752834 
+            xmax = 44.04459353133406 
+            text = "sp" 
+        intervals [114]:
+            xmin = 44.04459353133406 
+            xmax = 44.207726779284584 
+            text = "MY" 
+        intervals [115]:
+            xmin = 44.207726779284584 
+            xmax = 44.515242327145344 
+            text = "BED" 
+        intervals [116]:
+            xmin = 44.515242327145344 
+            xmax = 44.63712348940723 
+            text = "WAS" 
+        intervals [117]:
+            xmin = 44.63712348940723 
+            xmax = 44.74163275254729 
+            text = "A" 
+        intervals [118]:
+            xmin = 44.74163275254729 
+            xmax = 45.2396825397 
+            text = "SLEEPING" 
+        intervals [119]:
+            xmin = 45.2396825397 
+            xmax = 45.5489795918 
+            text = "BAG" 
+        intervals [120]:
+            xmin = 45.5489795918 
+            xmax = 46.25220857831984 
+            text = "sp" 
+        intervals [121]:
+            xmin = 46.25220857831984 
+            xmax = 46.520413343675 
+            text = "DOG" 
+        intervals [122]:
+            xmin = 46.520413343675 
+            xmax = 46.88605683046066 
+            text = "HAIR" 
+        intervals [123]:
+            xmin = 46.88605683046066 
+            xmax = 47.50671321059426 
+            text = "ACCUMULATED" 
+        intervals [124]:
+            xmin = 47.50671321059426 
+            xmax = 47.61359361442392 
+            text = "IN" 
+        intervals [125]:
+            xmin = 47.61359361442392 
+            xmax = 48.00530661390223 
+            text = "GIANT" 
+        intervals [126]:
+            xmin = 48.00530661390223 
+            xmax = 48.552154195 
+            text = "CLUMPS" 
+        intervals [127]:
+            xmin = 48.552154195 
+            xmax = 48.6219954649 
+            text = "IN" 
+        intervals [128]:
+            xmin = 48.6219954649 
+            xmax = 48.712531586342976 
+            text = "THE" 
+        intervals [129]:
+            xmin = 48.712531586342976 
+            xmax = 49.1408163265 
+            text = "CORNER" 
+        intervals [130]:
+            xmin = 49.1408163265 
+            xmax = 49.2505668934 
+            text = "OF" 
+        intervals [131]:
+            xmin = 49.2505668934 
+            xmax = 49.7993197279 
+            text = "ROOMS" 
+        intervals [132]:
+            xmin = 49.7993197279 
+            xmax = 49.9290249433 
+            text = "AND" 
+        intervals [133]:
+            xmin = 49.9290249433 
+            xmax = 50.0587301587 
+            text = "IN" 
+        intervals [134]:
+            xmin = 50.0587301587 
+            xmax = 50.612419425437956 
+            text = "FILTHY" 
+        intervals [135]:
+            xmin = 50.612419425437956 
+            xmax = 51.1063492063 
+            text = "PATCHES" 
+        intervals [136]:
+            xmin = 51.1063492063 
+            xmax = 51.17869805625472 
+            text = "ON" 
+        intervals [137]:
+            xmin = 51.17869805625472 
+            xmax = 51.257452038023935 
+            text = "THE" 
+        intervals [138]:
+            xmin = 51.257452038023935 
+            xmax = 51.66321006707608 
+            text = "RUG" 
+        intervals [139]:
+            xmin = 51.66321006707608 
+            xmax = 52.728263915764565 
+            text = "sp" 
+        intervals [140]:
+            xmin = 52.728263915764565 
+            xmax = 52.8224489796 
+            text = "I" 
+        intervals [141]:
+            xmin = 52.8224489796 
+            xmax = 52.9621315193 
+            text = "WAS" 
+        intervals [142]:
+            xmin = 52.9621315193 
+            xmax = 53.39727928620913 
+            text = "COMMUTING" 
+        intervals [143]:
+            xmin = 53.39727928620913 
+            xmax = 53.5707482993 
+            text = "AN" 
+        intervals [144]:
+            xmin = 53.5707482993 
+            xmax = 54.0795918367 
+            text = "HOUR" 
+        intervals [145]:
+            xmin = 54.0795918367 
+            xmax = 54.3290249433 
+            text = "EACH" 
+        intervals [146]:
+            xmin = 54.3290249433 
+            xmax = 54.5585034014 
+            text = "WAY" 
+        intervals [147]:
+            xmin = 54.5585034014 
+            xmax = 54.7480725624 
+            text = "FOR" 
+        intervals [148]:
+            xmin = 54.7480725624 
+            xmax = 55.20404736519275 
+            text = "WORK" 
+        intervals [149]:
+            xmin = 55.20404736519275 
+            xmax = 55.29967720019823 
+            text = "sp" 
+        intervals [150]:
+            xmin = 55.29967720019823 
+            xmax = 55.6360544218 
+            text = "AND" 
+        intervals [151]:
+            xmin = 55.6360544218 
+            xmax = 56.21815290540416 
+            text = "UNMOORED" 
+        intervals [152]:
+            xmin = 56.21815290540416 
+            xmax = 56.37420909419864 
+            text = "FROM" 
+        intervals [153]:
+            xmin = 56.37420909419864 
+            xmax = 56.546717816169306 
+            text = "MY" 
+        intervals [154]:
+            xmin = 56.546717816169306 
+            xmax = 57.0029478458 
+            text = "PREVIOUS" 
+        intervals [155]:
+            xmin = 57.0029478458 
+            xmax = 57.35119969547677 
+            text = "LIFE" 
+        intervals [156]:
+            xmin = 57.35119969547677 
+            xmax = 58.108380884623465 
+            text = "sp" 
+        intervals [157]:
+            xmin = 58.108380884623465 
+            xmax = 58.4097505669 
+            text = "COULDN'T" 
+        intervals [158]:
+            xmin = 58.4097505669 
+            xmax = 58.8786848073 
+            text = "MANAGE" 
+        intervals [159]:
+            xmin = 58.8786848073 
+            xmax = 58.9285714286 
+            text = "sp" 
+        intervals [160]:
+            xmin = 58.9285714286 
+            xmax = 59.1181405896 
+            text = "MY" 
+        intervals [161]:
+            xmin = 59.1181405896 
+            xmax = 60.09724481962794 
+            text = "RESPONSIBILITIES" 
+        intervals [162]:
+            xmin = 60.09724481962794 
+            xmax = 61.273418790193226 
+            text = "sp" 
+        intervals [163]:
+            xmin = 61.273418790193226 
+            xmax = 61.36717353039468 
+            text = "I" 
+        intervals [164]:
+            xmin = 61.36717353039468 
+            xmax = 61.8219954649 
+            text = "ARRANGED" 
+        intervals [165]:
+            xmin = 61.8219954649 
+            xmax = 61.9217687075 
+            text = "FOR" 
+        intervals [166]:
+            xmin = 61.9217687075 
+            xmax = 61.9517006803 
+            text = "A" 
+        intervals [167]:
+            xmin = 61.9517006803 
+            xmax = 62.280952381 
+            text = "DOG" 
+        intervals [168]:
+            xmin = 62.280952381 
+            xmax = 62.63501548632735 
+            text = "SITTER" 
+        intervals [169]:
+            xmin = 62.63501548632735 
+            xmax = 63.2387755102 
+            text = "sp" 
