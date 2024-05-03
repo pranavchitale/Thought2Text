@@ -7,3 +7,10 @@ __pycache__/
 
 *.hf5
 *.npz
+
+ds003020
+ds004510
+data_lm
+data_test
+data_train
+models
