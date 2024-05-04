@@ -78,7 +78,9 @@ class WER(object):
     
     def score(self, ref, pred):
         scores = []
-        for ref_seg, pred_seg in zip(ref, pred):
+        ref_strings = [" ".join(x) for x in ref]
+        pred_strings = [" ".join(x) for x in pred]
+        for ref_seg, pred_seg in zip(ref_strings, pred_strings):
             if len(ref_seg) == 0 : error = 1.0
             else: error = wer(ref_seg, pred_seg)
             if self.use_score: scores.append(1 - error)
