@@ -26,7 +26,7 @@ GPT_WORDS = 5
 # decoder parameters
 
 RANKED = True
-WIDTH = 200
+WIDTH = 100
 NM_ALPHA = 2/3
 LM_TIME = 8
 LM_MASS = 0.9
