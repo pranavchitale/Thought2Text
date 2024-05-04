@@ -1,4 +1,4 @@
-import os, sys, random, re, collections, string
+import re, argparse, sys
 from datasets import load_dataset
 
 import numpy as np
@@ -56,7 +56,20 @@ class cnnDataSet(Dataset):
     def __getitem__(self, idx):
         return self.input_ids[idx],  self.attention_mask[idx], torch.sum(self.attention_mask[idx])
 
+class HyperParameters():
+    def __init__(self, batch_sz=3, learn_rate = 1e-5, wt_decay = 1e-5, num_epochs = 2):
+        self.batch_size = batch_sz
+        self.num_epochs = num_epochs
+        self.learn_rate = learn_rate
+        self.wt_decay = wt_decay
+        pass
 
+    def get_hyperparam(self):
+        """
+        Method to return the hyper-parameters of training the model in this order:\\
+        batch_size, learn_rate, weight_decay, num_epochs
+        """
+        return self.batch_size, self.learn_rate, self.wt_decay, self.num_epochs
 
 def split_article(art):
     splitstr = re.split(' -- ', art, 1)
@@ -84,7 +97,7 @@ def tokenize_str(examples):
     return model_inputs
 
 
-def train_model(train_dataset, plot_loss_curves=True, model=gpt2_model):
+def train_model(train_dataset, plot_loss_curves=True, model=gpt2_model, hyperparams=HyperParameters()):
     '''
     Method to fine tune and train the passed model
     Returns nothing
@@ -95,10 +108,7 @@ def train_model(train_dataset, plot_loss_curves=True, model=gpt2_model):
     # unique_labels = train_dataset.get_unique_labels()
     # unique_labels_encoding = {lab:gpt2_tokenizer.encode(lab)[0] for lab in unique_labels}
     # Hyperparameters
-    batch_sz=3
-    learn_rate = 1e-5
-    wt_decay = 1e-5
-    num_epochs = 2
+    batch_sz, learn_rate,  wt_decay, num_epochs, = hyperparams.get_hyperparam()
 
     train_dataloader = DataLoader(train_dataset, batch_size=batch_sz)
 
@@ -184,7 +194,7 @@ def plot_loss_curve(losslist, rword, save_title = 'loss_curve_a2_p2.png'):
     plt.savefig(save_title)
 
 
-def main():
+def main(hyperparams):
     # Just training the first 10k articles for now
     train = dataset['train'].select(range(10000))
     test = dataset['test'].select(range(1000))
@@ -193,10 +203,38 @@ def main():
     tokenized_test = test.map(tokenize_str, batched=True)
 
     tokenized_train_dataset = cnnDataSet(tokenized_train)
-    train_model(tokenized_train_dataset, plot_loss_curves=True)
+    train_model(tokenized_train_dataset, plot_loss_curves=True, model=model, hyperparams=hyperparams)
     
     # https://pytorch.org/tutorials/beginner/saving_loading_models.html
     torch.save(model, 'fineTunedDistilGPT2_cnnDaily')
-    
 
+def initParser():
+    parser = argparse.ArgumentParser(
+        prog='train-gpt2/train_distilgpt2_cnnDaily.py',
+        description='Python script to train distilbert/gpt2 on CNN-Daily-News dataset'
+        )
+    base_hpm = HyperParameters()
+    batch_sz, learn_rate,  wt_decay, epochs, = base_hpm.get_hyperparam()
+    parser.add_argument('-b', '--batch-size', dest='batchsz', action='store', 
+                        nargs='?',default=batch_sz, type=int, help=f'Batch Size. Default Value : {batch_sz}')
+    parser.add_argument('-l', '--learn-rate', dest='lrnrate', action='store', 
+                        nargs='?',default=learn_rate, type=float, help=f'Learning Rate. Default Value : {learn_rate}')
+    parser.add_argument('-w', '--weight-decay', dest='wtdecay', action='store', 
+                        nargs='?',default=wt_decay, type=float, help=f'Weight Decay. Default Value : {wt_decay}')
+    parser.add_argument('-e', '--epochs', dest='epochs', action='store', 
+                        nargs='?',default=epochs, type=int, help=f'Num Epochs. Default Value : {epochs}')
+        
+    return parser
+if __name__ == '__main__':
+    parser = initParser()
+    args = parser.parse_args()
+    args_hyperparams = HyperParameters(
+        batch_sz=args.batchsz,
+        learn_rate=args.lrnrate,
+        wt_decay=args.wtdecay,
+        num_epochs=args.epochs)
+    
+    # print(type(args.batchsz), type(args.epochs))
+    # print(args_hyperparams.get_hyperparam())
+    main(args_hyperparams)
     
