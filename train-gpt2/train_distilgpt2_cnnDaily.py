@@ -206,7 +206,8 @@ def main(hyperparams):
     train_model(tokenized_train_dataset, plot_loss_curves=True, model=model, hyperparams=hyperparams)
     
     # https://pytorch.org/tutorials/beginner/saving_loading_models.html
-    torch.save(model, 'fineTunedDistilGPT2_cnnDaily')
+    torch.save(model.state_dict(), 'fineTunedDistilGPT2_cnnDaily_state_dict')
+    # BIG CHANGE LOL
 
 def initParser():
     parser = argparse.ArgumentParser(
