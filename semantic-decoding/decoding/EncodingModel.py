@@ -13,11 +13,11 @@ class EncodingModel():
         self.sigma = sigma
         self.resp = torch.from_numpy(resp[:, voxels]).float().to(self.device)
         if mlp_path:
-            self.model = MLP(3072, config.VOXELS).to(self.device)
+            self.mlp = MLP(3072, config.VOXELS).to(self.device)
             model_state_dict = torch.load(mlp_path, map_location=self.device)
             if "module." in list(model_state_dict.keys())[0]:
                 model_state_dict = {k.replace("module.", ""): v for k, v in model_state_dict.items()}
-            self.model.load_state_dict(model_state_dict)
+            self.mlp.load_state_dict(model_state_dict)
             self.variant = "mlp"
         else:
             self.weights = torch.from_numpy(weights[:, voxels]).float().to(self.device)
@@ -37,7 +37,7 @@ class EncodingModel():
             if self.variant == "base":
                 presp = torch.matmul(stim, self.weights)
             else:
-                presp = self.model(stim)
+                presp = self.mlp(stim)
             diff = presp - self.resp[trs] # encoding model residuals
             multi = torch.matmul(torch.matmul(diff, self.precision), diff.permute(0, 2, 1))
             return -0.5 * multi.diagonal(dim1 = -2, dim2 = -1).sum(dim = 1).detach().cpu().numpy()
