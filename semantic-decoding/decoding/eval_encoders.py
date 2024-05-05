@@ -3,6 +3,7 @@ import numpy as np
 import json
 import argparse
 import torch
+from matplotlib import pyplot as plt
 
 import config
 from GPT import GPT
@@ -10,7 +11,11 @@ from StimulusModel import LMFeatures
 from utils_stim import get_stim
 from utils_resp import get_resp
 from utils_ridge.ridge import ridge, bootstrap_ridge
+
+
+DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 np.random.seed(42)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -18,6 +23,7 @@ if __name__ == "__main__":
     parser.add_argument("--gpt", type = str, default = "perceived", choices=["perceived", "imagined"])
     parser.add_argument("--sessions", nargs = "+", type = int, 
         default = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 20])
+    parser.add_argument("--model", type = str, default = "EM", choices=["EM", "EM_MLP", "EM_GPT2"])
     args = parser.parse_args()
 
     # training stories
@@ -35,25 +41,31 @@ if __name__ == "__main__":
     
     # load text stimulus
     rstim, tr_stats, word_stats = get_stim(stories, features)
-    rstim = torch.from_numpy(rstim).float()
+    rstim = torch.from_numpy(rstim).float().to(DEVICE)
 
     # load fmri responses
     rresp = get_resp(args.subject, stories, stack = True)
-    rresp = torch.from_numpy(rresp).float()
+    rresp = torch.from_numpy(rresp).float().to(DEVICE)
 
-    # load EM weights
-    load_location = os.path.join(config.MODEL_DIR, args.subject)
-    encoding_model = np.load(os.path.join(load_location, "encoding_model_%s.npz" % args.gpt))
-    weights = torch.from_numpy(encoding_model["weights"]).float()
+    print(f"Beginning Evaluation with {args.model}")
+    if args.model == "EM":
+        # load EM weights
+        load_location = os.path.join(config.MODEL_DIR, args.subject)
+        encoding_model = np.load(os.path.join(load_location, "encoding_model_%s.npz" % args.gpt))
+        weights = torch.from_numpy(encoding_model["weights"]).float().to(DEVICE)
 
-    # make response predictions
-    presp = torch.matmul(rstim, weights)
+        # get response predictions
+        presp = torch.matmul(rstim, weights) * 10
 
-    # evaluate mse
-    r2 = torch.square(presp - rresp)
-    mse  = torch.mean(r2, dim=1)
-    # print(mse.shape)
+        # calculate error
+        mse = torch.square(presp - rresp)
+        mse  = torch.mean(mse, dim=1)
+        mse = torch.mean(mse)
+        print("Overall MSE (voxel-wise):", mse.item())
 
-    overall_mse = torch.mean(mse)
-    print("Overall MSE:", overall_mse.item())
+    elif args.model == "EM_MLP":
+        pass
+    
+    else:
+        pass
     

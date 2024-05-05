@@ -2,6 +2,7 @@ import os
 import numpy as np
 import json
 import argparse
+import torch
 
 import config
 from GPT import GPT
@@ -9,7 +10,8 @@ from StimulusModel import LMFeatures
 from utils_stim import get_stim
 from utils_resp import get_resp
 from utils_ridge.ridge import ridge, bootstrap_ridge
-np.random.seed(42)
+
+np.random.seed(42)    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
