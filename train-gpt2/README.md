@@ -4,7 +4,7 @@ Dataset used: https://huggingface.co/datasets/cnn_dailymail - Can/need to cite t
 
 ```
 >$ python3 train_distilgpt2_cnnDaily.py -h
-usage: train-gpt2/train_distilgpt2_cnnDaily.py [-h] [-b [BATCHSZ]] [-l [LRNRATE]] [-w [WTDECAY]] [-e [EPOCHS]]
+usage: train-gpt2/train_distilgpt2_cnnDaily.py [-h] [-b [BATCHSZ]] [-l [LRNRATE]] [-w [WTDECAY]] [-e [EPOCHS]] [-s [SAVEPATH]]
 
 Python script to train distilbert/gpt2 on CNN-Daily-News dataset
 
@@ -18,4 +18,6 @@ options:
                         Weight Decay. Default Value : 1e-05
   -e [EPOCHS], --epochs [EPOCHS]
                         Num Epochs. Default Value : 2
+  -s [SAVEPATH], --save-path [SAVEPATH]
+                        Path to save model at. Default Path: fineTunedDistilGPT2_cnnDaily_state_dict.pth
 ```

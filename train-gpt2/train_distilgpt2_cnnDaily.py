@@ -194,7 +194,10 @@ def plot_loss_curve(losslist, rword, save_title = 'loss_curve_a2_p2.png'):
     plt.savefig(save_title)
 
 
-def main(hyperparams):
+def main(hyperparams, model_paths):
+
+    save_path = model_paths # Want to add load_path as well?
+    
     # Just training the first 10k articles for now
     train = dataset['train'].select(range(10000))
     test = dataset['test'].select(range(1000))
@@ -206,8 +209,19 @@ def main(hyperparams):
     train_model(tokenized_train_dataset, plot_loss_curves=True, model=model, hyperparams=hyperparams)
     
     # https://pytorch.org/tutorials/beginner/saving_loading_models.html
-    torch.save(model.state_dict(), 'fineTunedDistilGPT2_cnnDaily_state_dict')
+    print(f'Saving Model State as {save_path}')
+    torch.save(model.state_dict(), save_path)
     # BIG CHANGE LOL
+
+    # Saving and loading works on basic model. 
+    # print('Loading Model State as fineTunedDistilGPT2_cnnDaily')
+    # # torch.save(model, 'fineTunedDistilGPT2_cnnDaily')
+    # model2 = gpt2_model
+    # model2.load_state_dict(torch.load('fineTunedDistilGPT2_cnnDaily_state_dict.pth'))
+    # print(model2)
+    
+
+    
 
 def initParser():
     parser = argparse.ArgumentParser(
@@ -216,6 +230,7 @@ def initParser():
         )
     base_hpm = HyperParameters()
     batch_sz, learn_rate,  wt_decay, epochs, = base_hpm.get_hyperparam()
+    svpth = 'fineTunedDistilGPT2_cnnDaily_state_dict.pth'
     parser.add_argument('-b', '--batch-size', dest='batchsz', action='store', 
                         nargs='?',default=batch_sz, type=int, help=f'Batch Size. Default Value : {batch_sz}')
     parser.add_argument('-l', '--learn-rate', dest='lrnrate', action='store', 
@@ -224,6 +239,8 @@ def initParser():
                         nargs='?',default=wt_decay, type=float, help=f'Weight Decay. Default Value : {wt_decay}')
     parser.add_argument('-e', '--epochs', dest='epochs', action='store', 
                         nargs='?',default=epochs, type=int, help=f'Num Epochs. Default Value : {epochs}')
+    parser.add_argument('-s', '--save-path', dest='savepath', action='store', 
+                        nargs='?',default=svpth, type=str, help=f'Path to save model at. Default Path: {svpth}')
         
     return parser
 if __name__ == '__main__':
@@ -237,5 +254,5 @@ if __name__ == '__main__':
     
     # print(type(args.batchsz), type(args.epochs))
     # print(args_hyperparams.get_hyperparam())
-    main(args_hyperparams)
+    main(args_hyperparams, parser.savepath)
     
