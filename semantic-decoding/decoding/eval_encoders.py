@@ -17,8 +17,10 @@ from utils_ridge.ridge import ridge, bootstrap_ridge
 DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 np.random.seed(42)
 
-# EM_BASE (voxel-wise MSE): 1.3242875337600708
-# EM_MLP (voxel-wise MSE): 0.849409282207489
+# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --model EM_BASE --load_path semantic-decoding/models/S1/encoding_model_perceived.npz
+#   EM_BASE (voxel-wise MSE): 2.8773880004882812
+# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --model EM_MLP --load_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
+#   EM_MLP (voxel-wise MSE): 0.7740427255630493
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -44,8 +46,9 @@ if __name__ == "__main__":
     features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
     
     # Prepare stimulus + response data
+    em_cp = np.load("semantic-decoding/models/S1/encoding_model_perceived.npz")
     rstim, tr_stats, word_stats = get_stim(stories, features)
-    rresp = get_resp(args.subject, stories, stack = True)
+    rresp = get_resp(args.subject, stories, stack = True)[:, em_cp["voxels"]]
     train_dataset = FMRIDataset(rstim, rresp)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=False)
 
@@ -55,8 +58,7 @@ if __name__ == "__main__":
         rresp = torch.from_numpy(rresp).float().to(DEVICE)
 
         # Load weights
-        encoding_model = np.load(args.load_path)
-        weights = torch.from_numpy(encoding_model["weights"]).float().to(DEVICE)
+        weights = torch.from_numpy(em_cp["weights"])[:, em_cp["voxels"]].float().to(DEVICE)
 
         # get response predictions
         presp = torch.matmul(rstim, weights) * 10
@@ -66,7 +68,7 @@ if __name__ == "__main__":
         print("Overall MSE (voxel-wise):", mse.item())
 
     elif args.model == "EM_MLP":
-        model = MLP(3072, 3072, 81126).to(DEVICE)
+        model = MLP(3072, config.VOXELS).to(DEVICE)
 
         # Load weights
         model_state_dict = torch.load(args.load_path, map_location=DEVICE)

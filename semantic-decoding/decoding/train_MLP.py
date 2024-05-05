@@ -13,13 +13,10 @@ from utils_resp import get_resp
 from utils_ridge.ridge import ridge, bootstrap_ridge
 
 # Experiments:
-# CUDA_VISIBLE_DEVICES=1,2,3 python decoding/train_MLP.py --num_epochs 20 --batch_size 256 --lr 1e-5 --wd 1e-5 --save_name mlp_perceived_20_1e-5_1e-5.pth > exps/mlp_20_1e-5_1e-5.txt
-# CUDA_VISIBLE_DEVICES=1,2,3 python decoding/train_MLP.py --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5 --save_name mlp_perceived_20_1e-3_1e-5.pth > exps/mlp_20_1e-3_1e-5.txt
-# CUDA_VISIBLE_DEVICES=1,2,3 python decoding/train_MLP.py --num_epochs 20 --batch_size 256 --lr 1e-2 --wd 1e-5 --save_name mlp_perceived_20_1e-2_1e-5.pth > exps/mlp_20_1e-2_1e-5.txt
+# CUDA_VISIBLE_DEVICES=1,2,3 python semantic-decoding/decoding/train_MLP.py --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5 --save_name mlp_perceived_1e-3_1e-5.pth > semantic-decoding/exps/mlp_1e-3_1e-5.txt
 
 DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 np.random.seed(42)
-
 
 class FMRIDataset(torch.utils.data.Dataset):
     def __init__(self, stim, resp):
@@ -34,10 +31,10 @@ class FMRIDataset(torch.utils.data.Dataset):
 
 
 class MLP(torch.nn.Module):
-    def __init__(self, d_in, d_hidden, d_out):
+    def __init__(self, d_in, d_out):
         super().__init__()
         self.layers = torch.nn.Sequential(
-            torch.nn.Linear(d_in, d_hidden),
+            torch.nn.Linear(d_in, d_in),
             torch.nn.Tanh(),
             torch.nn.Linear(d_in, d_out)
         )
@@ -81,12 +78,13 @@ if __name__ == '__main__':
     features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
 
     # load stimulus + responses data
+    em_cp = np.load(os.path.join(config.MODEL_DIR, args.subject, f"encoding_model_{args.gpt}.npz"))
     rstim, tr_stats, word_stats = get_stim(stories, features)
-    rresp = get_resp(args.subject, stories, stack = True)
+    rresp = get_resp(args.subject, stories, stack = True)[:, em_cp["voxels"]]
     train_dataset = FMRIDataset(rstim, rresp)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=False)
 
-    model = MLP(3072, 3072, 81126).to(DEVICE)
+    model = MLP(3072, config.VOXELS).to(DEVICE)
     if args.load_path:
         model_state_dict = torch.load(args.load_path, map_location=DEVICE)
         if "module." in list(model_state_dict.keys())[0]:

@@ -6,6 +6,8 @@ import argparse
 import config
 from utils_eval import generate_null, load_transcript, windows, segment_data, WER, BLEU, METEOR, BERTSCORE
 
+# python semantic-decoding/decoding/evaluate_predictions.py --subject S1 --experiment perceived_speech --task wheretheressmoke
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--subject", type = str, required = True)

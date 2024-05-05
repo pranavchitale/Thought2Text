@@ -13,11 +13,15 @@ from EncodingModel import EncodingModel
 from StimulusModel import StimulusModel, get_lanczos_mat, affected_trs, LMFeatures
 from utils_stim import predict_word_rate, predict_word_times
 
+# CUDA_VISIBLE_DEVICES=2,3 python semantic-decoding/decoding/run_decoder.py --variant base --mlp_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--subject", type = str, required = True)
-    parser.add_argument("--experiment", type = str, required = True)
-    parser.add_argument("--task", type = str, required = True)
+    parser.add_argument("--subject", type = str, default = "S1")
+    parser.add_argument("--experiment", type = str, default = "perceived_speech")
+    parser.add_argument("--task", type = str, default = "wheretheressmoke")
+    parser.add_argument("--variant", type = str, default = "base", choices = ["base", "mlp", "gpt2"])
+    parser.add_argument("--mlp_path", type = str, default = "", help = "Specify path to checkpoint file if `mlp` variant is selected")
     args = parser.parse_args()
     
     # determine GPT checkpoint based on experiment
@@ -50,7 +54,10 @@ if __name__ == "__main__":
     noise_model = encoding_model["noise_model"]
     tr_stats = encoding_model["tr_stats"]
     word_stats = encoding_model["word_stats"]
-    em = EncodingModel(resp, weights, encoding_model["voxels"], noise_model, device = config.EM_DEVICE)
+    if args.variant == "base":
+        em = EncodingModel(resp, weights, encoding_model["voxels"], noise_model, device = config.EM_DEVICE)
+    elif args.variant == "mlp":
+        em = EncodingModel(resp, weights, encoding_model["voxels"], noise_model, mlp_path = args.mlp_path, device = config.EM_DEVICE)
     em.set_shrinkage(config.NM_ALPHA)
     assert args.task not in encoding_model["stories"]
     
@@ -81,4 +88,4 @@ if __name__ == "__main__":
     if args.experiment in ["perceived_movie", "perceived_multispeaker"]: decoder.word_times += 10
     save_location = os.path.join(config.RESULT_DIR, args.subject, args.experiment)
     os.makedirs(save_location, exist_ok = True)
-    decoder.save(os.path.join(save_location, args.task))
+    decoder.save(os.path.join(save_location, f"{args.task}_{args.variant}"))
