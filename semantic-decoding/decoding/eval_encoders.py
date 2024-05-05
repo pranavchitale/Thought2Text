@@ -6,6 +6,7 @@ import torch
 from matplotlib import pyplot as plt
 
 import config
+from train_MLP import FMRIDataset, MLP
 from GPT import GPT
 from StimulusModel import LMFeatures
 from utils_stim import get_stim
@@ -24,6 +25,7 @@ if __name__ == "__main__":
     parser.add_argument("--sessions", nargs = "+", type = int, 
         default = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 20])
     parser.add_argument("--model", type = str, default = "EM", choices=["EM", "EM_MLP", "EM_GPT2"])
+    parser.add_argument("--load_path", type = str, required=True, help="Specify path to load checkpoint parameters")
     args = parser.parse_args()
 
     # training stories
@@ -39,19 +41,18 @@ if __name__ == "__main__":
     gpt = GPT(path = os.path.join(config.DATA_LM_DIR, args.gpt, "model"), vocab = gpt_vocab, device = config.GPT_DEVICE)
     features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
     
-    # load text stimulus
+    # Prepare stimulus + response data
     rstim, tr_stats, word_stats = get_stim(stories, features)
-    rstim = torch.from_numpy(rstim).float().to(DEVICE)
-
-    # load fmri responses
     rresp = get_resp(args.subject, stories, stack = True)
-    rresp = torch.from_numpy(rresp).float().to(DEVICE)
+    train_dataset = FMRIDataset(rstim, rresp)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=False)
 
     print(f"Beginning Evaluation with {args.model}")
     if args.model == "EM":
-        # load EM weights
-        load_location = os.path.join(config.MODEL_DIR, args.subject)
-        encoding_model = np.load(os.path.join(load_location, "encoding_model_%s.npz" % args.gpt))
+        rstim = torch.from_numpy(rstim).float().to(DEVICE)
+        rresp = torch.from_numpy(rresp).float().to(DEVICE)
+        # Load weights
+        encoding_model = np.load(args.load_path)
         weights = torch.from_numpy(encoding_model["weights"]).float().to(DEVICE)
 
         # get response predictions
@@ -64,8 +65,14 @@ if __name__ == "__main__":
         print("Overall MSE (voxel-wise):", mse.item())
 
     elif args.model == "EM_MLP":
-        pass
-    
+        model = MLP(3072, 3072, 81126).to(DEVICE)
+
+        # Load weights
+        model_state_dict = torch.load(args.load_path, map_location=DEVICE)
+        if "module." in list(model_state_dict.keys())[0]:
+            model_state_dict = {k.replace("module.", ""): v for k, v in model_state_dict.items()}
+        model.load_state_dict(model_state_dict)
+
     else:
         pass
     

@@ -89,8 +89,8 @@ if __name__ == '__main__':
     if args.load_path:
         model_state_dict = torch.load(args.load_path, map_location=DEVICE)
         if "module." in list(model_state_dict.keys())[0]:
-            state_dict = {k.replace("module.", ""): v for k, v in model_state_dict.items()}
-        model.load_state_dict(state_dict)
+            model_state_dict = {k.replace("module.", ""): v for k, v in model_state_dict.items()}
+        model.load_state_dict(model_state_dict)
         print('Resuming model training from checkpoint...')
 
     # DataParallel multi-GPU training (if available)
