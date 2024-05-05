@@ -14,7 +14,6 @@ from utils_ridge.ridge import ridge, bootstrap_ridge
 
 # Experiments:
 # CUDA_VISIBLE_DEVICES=1,2,3 python decoding/train_MLP.py --num_epochs 20 --batch_size 256 --lr 1e-5 --wd 1e-5 --save_name mlp_perceived_20_1e-5_1e-5.pth > exps/mlp_20_1e-5_1e-5.txt
-# 
 
 DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 np.random.seed(42)
@@ -101,13 +100,13 @@ if __name__ == '__main__':
     
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.wd)
     print('Starting Training Loop...')
+    model.train()
     for epoch in range(args.num_epochs):
         batch_losses = []
-        model.train()
         batches = tqdm.tqdm(train_loader)
         for idx, data in enumerate(batches):
-            x, rresp = data[0].to(DEVICE), data[1].to(DEVICE)
-            presp = model(x)
+            rstim, rresp = data[0].to(DEVICE), data[1].to(DEVICE)
+            presp = model(rstim)
             loss = calc_loss(presp, rresp)
             optimizer.zero_grad()
             loss.backward()
