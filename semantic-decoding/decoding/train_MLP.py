@@ -14,6 +14,8 @@ from utils_ridge.ridge import ridge, bootstrap_ridge
 
 # Experiments:
 # CUDA_VISIBLE_DEVICES=1,2,3 python decoding/train_MLP.py --num_epochs 20 --batch_size 256 --lr 1e-5 --wd 1e-5 --save_name mlp_perceived_20_1e-5_1e-5.pth > exps/mlp_20_1e-5_1e-5.txt
+# CUDA_VISIBLE_DEVICES=1,2,3 python decoding/train_MLP.py --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5 --save_name mlp_perceived_20_1e-3_1e-5.pth > exps/mlp_20_1e-3_1e-5.txt
+# CUDA_VISIBLE_DEVICES=1,2,3 python decoding/train_MLP.py --num_epochs 20 --batch_size 256 --lr 1e-2 --wd 1e-5 --save_name mlp_perceived_20_1e-2_1e-5.pth > exps/mlp_20_1e-2_1e-5.txt
 
 DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 np.random.seed(42)

@@ -18,7 +18,7 @@ DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cp
 np.random.seed(42)
 
 # EM_BASE (voxel-wise MSE): 1.3242875337600708
-# EM_MLP (voxel-wise MSE): 0.9773797988891602
+# EM_MLP (voxel-wise MSE): 0.849409282207489
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
