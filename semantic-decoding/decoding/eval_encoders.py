@@ -17,6 +17,7 @@ System Requirements:
 Description:
 This file evaluates different variations of the EncoderModel. The options are EM_BASE which is the baseline encoder, EM_MLP which is with the
 multi-layer perceptron instead of bootstrapped ridge regressions, and EM_GPT2 which is the `distilgpt2` extracted stimulus feeding to the EM.
+
 """
 
 

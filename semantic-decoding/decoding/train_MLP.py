@@ -14,7 +14,9 @@ System Requirements:
 - Dependencies: (conda) environment.yaml
 
 Description:
-This file trains the MLP (Multi-Layer Perceptron) for the EncoderModel and saves its checkpoint file to `mlp_perceived_1e-3_1e-5.pth`
+This file trains the MLP (Multi-Layer Perceptron) which is also known as a (FCNN) Fully-Connected Neural Network
+starting from Line 108 (III. LM | Transformers). 
+
 """
 
 
