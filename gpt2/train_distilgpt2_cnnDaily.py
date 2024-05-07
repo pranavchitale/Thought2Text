@@ -5,46 +5,37 @@ Author(s):
 - Pranav Chitale (pranavshailesh.chitale@stonybrook.edu),                                   
 - Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu) 
 
-
 Usage:
-(From root directory:)
-$ python3 train-gpt2/train_distilgpt2_cnnDaily.py [-h] [-b [BATCHSZ]] [-l [LRNRATE]] [-w [WTDECAY]] [-e [EPOCHS]] [-s [SAVEPATH]]
+$ python3 gpt2/train_distilgpt2_cnnDaily.py [-h] [-b [BATCHSZ]] [-l [LRNRATE]] [-w [WTDECAY]] [-e [EPOCHS]] [-s [SAVEPATH]]
 
 System Requirements:
 - Operating System: Ubuntu
-- Python Version: Python 3.10.14
+- Python Version: Python 3.10.*
 - Dependencies: (conda) environment.yaml
 
 Description:
-This python script is used to finetune a distilGPT2 model on the "cnn_dailymail" dataset  
-consisting of more than 288,000 articles, with a mean token count of 786 tokens per       
-article. After training, the model is stored at a either a "PATH" specified by the user   
-or in this script's directory under the name "fineTunedDistilGPT2_cnnDaily_state_dict.pth"
-The model is fine tuned following the ideas of Assignment 2, as seen in the "train_model" 
-method.
+This python script is used to finetune a distilGPT2 model on the "cnn_dailymail" dataset.
+After tokenizing (I. Syntax | Classification), the dataset consists of more than 288,000
+articles, with a mean token count of 786 tokens per article. We fine-tune `distilgpt` on 
+the data (III. LM | Transformers) which can be found on Line 114 (train_model function).
+The model also uses Cross Entropy Loss (III. LM | Transformers) as it's loss criteria
+during training.
 This script takes in optional training hyperparameters from the command line, and a path
-to store the trained model.
-More details on the hyperparameters are in the README file.
-
+to store the trained model. More details on the hyperparameters are in the README file.
 """
 
+
 import re, argparse
-from datasets import load_dataset
-
 import numpy as np
-import re
-
+from tqdm.auto import tqdm
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torch.optim import AdamW
-
-from tqdm.auto import tqdm
-
-
-import matplotlib.pyplot as plt
-
 import transformers
 from transformers import GPT2LMHeadModel, GPT2TokenizerFast, get_scheduler
+from datasets import load_dataset
+import matplotlib.pyplot as plt
+
 
 # https://huggingface.co/datasets/cnn_dailymail - Can/need to cite this
 dataset = load_dataset('cnn_dailymail', '3.0.0')
@@ -235,7 +226,7 @@ def main(hyperparams, model_paths):
 # Our parser for parsing cmd line arguments for hyperparameters. 
 def initParser():
     parser = argparse.ArgumentParser(
-        prog='train-gpt2/train_distilgpt2_cnnDaily.py',
+        prog='gpt2/train_distilgpt2_cnnDaily.py',
         description='Python script to train distilbert/gpt2 on CNN-Daily-News dataset'
         )
     base_hpm = HyperParameters()

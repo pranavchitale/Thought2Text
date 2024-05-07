@@ -1,3 +1,25 @@
+"""
+Filename: eval_encoders.py
+Author(s): 
+- Rajath Rao (rajath.rao@stonybrook.edu)
+- Pranav Chitale (pranavshailesh.chitale@stonybrook.edu)
+- Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
+
+Usage:
+$ python semantic-decoding/decoding/eval_encoders.py --model EM_BASE --load_path semantic-decoding/models/S1/encoding_model_perceived.npz
+$ python semantic-decoding/decoding/eval_encoders.py --model EM_MLP --load_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
+
+System Requirements:
+- Operating System: Ubuntu
+- Python Version: Python 3.10.*
+- Dependencies: (conda) environment.yaml
+
+Description:
+This file evaluates different variations of the EncoderModel. The options are EM_BASE which is the baseline encoder, EM_MLP which is with the
+multi-layer perceptron instead of bootstrapped ridge regressions, and EM_GPT2 which is the `distilgpt2` extracted stimulus feeding to the EM.
+"""
+
+
 import os
 import numpy as np
 import json
@@ -90,5 +112,6 @@ if __name__ == "__main__":
         print("Overall MSE (voxel-wise):", mse.item())
 
     else:
+        # WIP
         pass
     

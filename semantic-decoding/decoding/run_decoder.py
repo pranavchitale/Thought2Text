@@ -1,3 +1,25 @@
+"""
+Filename: run_decoder.py
+Author(s): 
+- Rajath Rao (rajath.rao@stonybrook.edu)
+- Pranav Chitale (pranavshailesh.chitale@stonybrook.edu)
+- Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
+
+Usage:
+$ python semantic-decoding/decoding/run_decoder.py --variant base
+$ python semantic-decoding/decoding/run_decoder.py --variant mlp --mlp_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
+
+System Requirements:
+- Operating System: Ubuntu
+- Python Version: Python 3.10.*
+- Dependencies: (conda) environment.yaml
+
+Description:
+This file runs the Decoder. The options are `base` which uses baseline EncoderModel, `mlp` which uses a variant EncoderModel with our
+trained MLP, and `gpt2` which uses the fine-tuned `distilgpt2` Language Model [NLP Content 4] to extract stimulus features.
+"""
+
+
 import os
 import numpy as np
 import json
@@ -39,13 +61,16 @@ if __name__ == "__main__":
     hf.close()
     
     # load gpt
-    with open(os.path.join(config.DATA_LM_DIR, gpt_checkpoint, "vocab.json"), "r") as f:
-        gpt_vocab = json.load(f)
-    with open(os.path.join(config.DATA_LM_DIR, "decoder_vocab.json"), "r") as f:
-        decoder_vocab = json.load(f)
-    gpt = GPT(path = os.path.join(config.DATA_LM_DIR, gpt_checkpoint, "model"), vocab = gpt_vocab, device = config.GPT_DEVICE)
-    features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
-    lm = LanguageModel(gpt, decoder_vocab, nuc_mass = config.LM_MASS, nuc_ratio = config.LM_RATIO)
+    if args.variant == 'base':
+        with open(os.path.join(config.DATA_LM_DIR, gpt_checkpoint, "vocab.json"), "r") as f:
+            gpt_vocab = json.load(f)
+        with open(os.path.join(config.DATA_LM_DIR, "decoder_vocab.json"), "r") as f:
+            decoder_vocab = json.load(f)
+        gpt = GPT(path = os.path.join(config.DATA_LM_DIR, gpt_checkpoint, "model"), vocab = gpt_vocab, device = config.GPT_DEVICE)
+        features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
+        lm = LanguageModel(gpt, decoder_vocab, nuc_mass = config.LM_MASS, nuc_ratio = config.LM_RATIO)
+    elif args.variant == 'gpt2':
+        pass
 
     # load models
     load_location = os.path.join(config.MODEL_DIR, args.subject)

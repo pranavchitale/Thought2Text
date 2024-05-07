@@ -1,3 +1,23 @@
+"""
+Filename: trainMLP.py
+Author(s): 
+- Rajath Rao (rajath.rao@stonybrook.edu)
+- Pranav Chitale (pranavshailesh.chitale@stonybrook.edu)
+- Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
+
+Usage:
+$ python semantic-decoding/decoding/train_MLP.py --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5 --save_name mlp_perceived_1e-3_1e-5.pth
+
+System Requirements:
+- Operating System: Ubuntu
+- Python Version: Python 3.10.*
+- Dependencies: (conda) environment.yaml
+
+Description:
+This file trains the MLP (Multi-Layer Perceptron) for the EncoderModel and saves its checkpoint file to `mlp_perceived_1e-3_1e-5.pth`
+"""
+
+
 import os
 import numpy as np
 import json

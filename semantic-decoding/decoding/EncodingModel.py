@@ -1,3 +1,24 @@
+"""
+Filename: EncodingModel.py
+Author(s): 
+- Rajath Rao (rajath.rao@stonybrook.edu)
+- Pranav Chitale (pranavshailesh.chitale@stonybrook.edu)
+- Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
+
+Usage:
+(non-executable) This file is a class to be referenced by other files
+
+System Requirements:
+- Operating System: Ubuntu
+- Python Version: Python 3.10.*
+- Dependencies: (conda) environment.yaml
+
+Description:
+This file contains the class instance for the EncodingModel which nests all variants within. One is the baseline encoder with a bootstrapped
+ridge regression while the other is the encoder with our MLP (multi-layer perceptron) trained to predict fMRI (BOLD) responses.
+"""
+
+
 import numpy as np
 import torch
 from train_MLP import MLP

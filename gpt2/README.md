@@ -1,10 +1,10 @@
 # Code to train GPT2 Model on CNN Dataset
 
-Dataset used: https://huggingface.co/datasets/cnn_dailymail - Can/need to cite this
+Dataset used: https://huggingface.co/datasets/cnn_dailymail - (Cite)
 
 ```
 >$ python3 train_distilgpt2_cnnDaily.py -h
-usage: train-gpt2/train_distilgpt2_cnnDaily.py [-h] [-b [BATCHSZ]] [-l [LRNRATE]] [-w [WTDECAY]] [-e [EPOCHS]] [-s [SAVEPATH]]
+usage: gpt2/train_distilgpt2_cnnDaily.py [-h] [-b [BATCHSZ]] [-l [LRNRATE]] [-w [WTDECAY]] [-e [EPOCHS]] [-s [SAVEPATH]]
 
 Python script to train distilbert/gpt2 on CNN-Daily-News dataset
 
