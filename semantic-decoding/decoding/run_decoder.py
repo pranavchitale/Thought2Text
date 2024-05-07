@@ -13,7 +13,8 @@ from EncodingModel import EncodingModel
 from StimulusModel import StimulusModel, get_lanczos_mat, affected_trs, LMFeatures
 from utils_stim import predict_word_rate, predict_word_times
 
-# CUDA_VISIBLE_DEVICES=2,3 python semantic-decoding/decoding/run_decoder.py --variant base --mlp_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
+# CUDA_VISIBLE_DEVICES=2 python semantic-decoding/decoding/run_decoder.py --variant base
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --variant mlp --mlp_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

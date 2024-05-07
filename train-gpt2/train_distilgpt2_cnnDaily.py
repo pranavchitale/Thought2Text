@@ -229,7 +229,7 @@ def initParser():
         description='Python script to train distilbert/gpt2 on CNN-Daily-News dataset'
         )
     base_hpm = HyperParameters()
-    batch_sz, learn_rate,  wt_decay, epochs, = base_hpm.get_hyperparam()
+    batch_sz, learn_rate,  wt_decay, epochs = base_hpm.get_hyperparam()
     svpth = 'fineTunedDistilGPT2_cnnDaily_state_dict.pth'
     parser.add_argument('-b', '--batch-size', dest='batchsz', action='store', 
                         nargs='?',default=batch_sz, type=int, help=f'Batch Size. Default Value : {batch_sz}')

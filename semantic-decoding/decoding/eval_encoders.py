@@ -3,7 +3,6 @@ import numpy as np
 import json
 import argparse
 import torch
-from matplotlib import pyplot as plt
 
 import config
 from train_MLP import FMRIDataset, MLP, calc_loss
@@ -18,9 +17,9 @@ DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cp
 np.random.seed(42)
 
 # CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --model EM_BASE --load_path semantic-decoding/models/S1/encoding_model_perceived.npz
-#   EM_BASE (voxel-wise MSE): 2.8773880004882812
+#   EM_BASE (voxel-wise MSE): 0.9394
 # CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --model EM_MLP --load_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
-#   EM_MLP (voxel-wise MSE): 0.7740427255630493
+#   EM_MLP (voxel-wise MSE): 0.7740
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -61,7 +60,7 @@ if __name__ == "__main__":
         weights = torch.from_numpy(em_cp["weights"])[:, em_cp["voxels"]].float().to(DEVICE)
 
         # get response predictions
-        presp = torch.matmul(rstim, weights) * 10
+        presp = torch.matmul(rstim, weights)
 
         # calculate error
         mse = calc_loss(presp, rresp)
