@@ -1,5 +1,7 @@
 # Thought2Text
 
+Base code: https://github.com/HuthLab/semantic-decoding
+
 We propose a framework aimed at assisting individuals with paralysis who are unable to speak. The motivation behind our research stems from the pressing need to provide these individuals with a means to express themselves effectively. We leverage functional magnetic resonance (fMRI) readings due to their non-invasive spatial and temporal information, as the input for a sequence-to-sequence task and decode them to corresponding text sequences, enabling autoregressive generation of semantic language from neural activity patterns.
 
 In mid-2023, researchers at UT Austin conducted a study and devised a framework to predict the words that a subject was hearing or imagining. The system can interpret the recorded fMRI data and produce textual representations encapsulating the gist of what the subject heard [1]. An fMRI is a voxel-based data type that contains spatial and temporal information about brain activity, acquired through medical imaging techniques that measure changes in Blood Oxygen Level Dependent (BOLD) within the brain.
@@ -24,4 +26,5 @@ Please consider the following files for grading:
 `semantic-decoding/decoding/trainEMwithGPT2.py`
 
 More details can be found in the comment headers in the above files.
+
 *Python notebooks were used purely for testing purposes, please do not consider them as official code for grading. Experiments can be found there however.
