@@ -1,4 +1,34 @@
-import re, argparse, sys
+"""
+Filename: train_distilgpt2_cnnDaily.py
+Author(s): 
+- Rajath Rao (rajath.rao@stonybrook.edu)                                                    
+- Pranav Chitale (pranavshailesh.chitale@stonybrook.edu),                                   
+- Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu) 
+
+
+Usage:
+(From root directory:)
+$ python3 train-gpt2/train_distilgpt2_cnnDaily.py [-h] [-b [BATCHSZ]] [-l [LRNRATE]] [-w [WTDECAY]] [-e [EPOCHS]] [-s [SAVEPATH]]
+
+System Requirements:
+- Operating System: Ubuntu
+- Python Version: Python 3.10.14
+- Dependencies: (conda) environment.yaml
+
+Description:
+This python script is used to finetune a distilGPT2 model on the "cnn_dailymail" dataset  
+consisting of more than 288,000 articles, with a mean token count of 786 tokens per       
+article. After training, the model is stored at a either a "PATH" specified by the user   
+or in this script's directory under the name "fineTunedDistilGPT2_cnnDaily_state_dict.pth"
+The model is fine tuned following the ideas of Assignment 2, as seen in the "train_model" 
+method.
+This script takes in optional training hyperparameters from the command line, and a path
+to store the trained model.
+More details on the hyperparameters are in the README file.
+
+"""
+
+import re, argparse
 from datasets import load_dataset
 
 import numpy as np
@@ -7,14 +37,9 @@ import re
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torch.optim import AdamW
-from torch.nn import BCELoss
 
 from tqdm.auto import tqdm
 
-import sklearn.model_selection
-import sklearn.metrics
-from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
-import heapq
 
 import matplotlib.pyplot as plt
 
@@ -34,10 +59,6 @@ gpt2_model = GPT2LMHeadModel.from_pretrained('distilbert/distilgpt2')
 model = gpt2_model
 tokenizer = gpt2_tokenizer
 tokenizer.pad_token = tokenizer.eos_token
-
-# data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=modelname)    
-# rouge = evaluate.load("rouge")
-
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
@@ -73,6 +94,7 @@ class HyperParameters():
         """
         return self.batch_size, self.learn_rate, self.wt_decay, self.num_epochs
 
+
 # Most of the articles are of the format "METADATA (LOCATION) -- Article". Some
 # (approx 10%) are not.
 # This function ensures that the article text is split on the first '--', and then
@@ -88,32 +110,20 @@ def split_article(art):
 
     
 def tokenize_str(examples):
-    # inputs = [doc for doc in examples["article"]]
-    inputs = []
-    # labs = examples['highlights']
-    
+
     inputs = [split_article(art) for art in examples['article']]
 
-    # model_inputs = gpt2_tokenizer(inputs, max_length=1024, truncation=True)
-    # labels = gpt2_tokenizer(text_target=labs, max_length=128, truncation=True)
-
     model_inputs = tokenizer(inputs, max_length=1024, truncation=True, return_tensors='pt', padding='max_length')
-    # labels = tokenizer(text_target=labs, max_length=128, truncation=True)
 
-    # model_inputs["labels"] = labels["input_ids"]
     return model_inputs
 
-
+# In this method, we use [III. Transformers] to finetune a DistilGPT2 model
 def train_model(train_dataset, plot_loss_curves=True, model=gpt2_model, hyperparams=HyperParameters()):
     '''
     Method to fine tune and train the passed model
     Returns nothing
-    train_dataset - The datset whose text is in the format PASSAGE\nQUESTION?ANSWER
     '''
 
-    # train_dataset = GPT2CustomDataset(training_text, training_labels, gpt2_tokenizer)
-    # unique_labels = train_dataset.get_unique_labels()
-    # unique_labels_encoding = {lab:gpt2_tokenizer.encode(lab)[0] for lab in unique_labels}
     # Hyperparameters
     batch_sz, learn_rate,  wt_decay, num_epochs, = hyperparams.get_hyperparam()
 
@@ -206,6 +216,7 @@ def main(hyperparams, model_paths):
     save_path = model_paths # Want to add load_path as well?
     
     # Just training the first 10k articles for now
+    # 10k * 786 = approx 7M tokens to train on. 
     train = dataset['train'].select(range(10000))
     test = dataset['test'].select(range(1000))
     validation = dataset['validation']
@@ -218,14 +229,6 @@ def main(hyperparams, model_paths):
     # https://pytorch.org/tutorials/beginner/saving_loading_models.html
     print(f'Saving Model State as {save_path}')
     torch.save(model.state_dict(), save_path)
-    # BIG CHANGE LOL
-
-    # Saving and loading works on basic model. 
-    # print('Loading Model State as fineTunedDistilGPT2_cnnDaily')
-    # # torch.save(model, 'fineTunedDistilGPT2_cnnDaily')
-    # model2 = gpt2_model
-    # model2.load_state_dict(torch.load('fineTunedDistilGPT2_cnnDaily_state_dict.pth'))
-    # print(model2)
     
 
     
