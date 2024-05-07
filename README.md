@@ -24,3 +24,4 @@ Please consider the following files for grading:
 `semantic-decoding/decoding/trainEMwithGPT2.py`
 
 More details can be found in the comment headers in the above files.
+*Python notebooks were used purely for testing purposes, please do not consider them as official code for grading. Experiments can be found there however.
