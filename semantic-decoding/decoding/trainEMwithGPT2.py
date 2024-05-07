@@ -1,3 +1,27 @@
+"""
+Filename: evalEMwithGPT2.py
+Author(s): 
+- Rajath Rao (rajath.rao@stonybrook.edu)
+- Pranav Chitale (pranavshailesh.chitale@stonybrook.edu)
+- Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
+
+Usage:
+python3 decoding/evalEMwithGPT2.py --subject S1 --experiment perceived_speech --task wheretheressmoke
+
+System Requirements:
+- Operating System: Ubuntu
+- Python Version: Python 3.10.14
+- Dependencies: (conda) environment.yaml
+
+Description:
+This file trains the Encoder Model using fine-tuned GPT2.
+The encoder serves to predict fMRI (BOLD) responses from textual stimulus for a given user. The learned parameters of the encoder allow
+the autoregressive decoder LM (III. LM | Transformers) to be conditioned on the user's brain states (IV. Human Language Modeling).
+The encoder is trained using bootstrapped regression (Line 78) (I. Syntax  |  Classification)
+Saves resultant file to models/[subject]/encoding_model_[task].npz
+"""
+
+
 import os
 import numpy as np
 import json

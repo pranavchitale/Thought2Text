@@ -7,6 +7,7 @@ Author(s):
 
 Usage:
 $ python3 gpt2/train_distilgpt2_cnnDaily.py [-h] [-b [BATCHSZ]] [-l [LRNRATE]] [-w [WTDECAY]] [-e [EPOCHS]] [-s [SAVEPATH]]
+Our parameters: python3 gpt2/train_distilgpt2_cnnDaily.py -b 8 -l 5e-7 -w 1e-2 -e 2
 
 System Requirements:
 - Operating System: Ubuntu

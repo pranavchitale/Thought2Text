@@ -16,9 +16,10 @@ System Requirements:
 Description:
 This file takes the Encoder Model created in trainEMwithGPT2.py.
 Additionally, it also requires the LM trained by GPT2_train.py.
+We use III. Language Modeling here. The LM proposes candidate sequences to Beam search (Line 111), uses Nucleus sampling to find next candidates,
+encodes candidate to BOLD vector and finds likelihood (Line 120) of each candidate w.r.t fMRI embedding.
+Saves resultant file to results/[subject]/[task]/[story].npz
 """
-
-
 
 
 import os
