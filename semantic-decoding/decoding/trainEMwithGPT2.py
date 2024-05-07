@@ -17,6 +17,7 @@ Description:
 This file trains the Encoder Model using fine-tuned GPT2.
 The encoder serves to predict fMRI (BOLD) responses from textual stimulus for a given user. The learned parameters of the encoder allow
 the autoregressive decoder LM (III. LM | Transformers) to be conditioned on the user's brain states (IV. Human Language Modeling).
+The encoder is trained using bootstrapped regression (Line 78) (I. Syntax  |  Classification)
 Saves resultant file to models/[subject]/encoding_model_[task].npz
 """
 
