@@ -16,7 +16,12 @@ System Requirements:
 
 Description:
 This file runs the Decoder. The options are `base` which uses baseline EncoderModel, `mlp` which uses a variant EncoderModel with our
-trained MLP, and `gpt2` which uses the fine-tuned `distilgpt2` Language Model [NLP Content 4] to extract stimulus features.
+trained MLP, and `gpt2` which uses the fine-tuned `distilgpt2` (III. LM | Transformers) to extract stimulus features which are 
+semantic vectors (II. Semantics | Probabilistic Models) on Line 74. The decoder uses the pretrained weights from the encoder variants
+to autoregressively propose candidate sequence tokens (III. LM | Transformers) while being conditioned on the user's brain state
+which can be seen starting from Line 100. This is also an Additionally, the language generation technique uses a Beam Search (III. LM | Transformers)
+with nucleus sampling--selecting from a subset of the most likely next tokens in a language model based on their probabilities rather
+than sampling from the entire vocabulary (Line 105+).
 """
 
 
