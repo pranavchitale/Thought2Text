@@ -17,7 +17,9 @@ System Requirements:
 Description:
 This file evaluates different variations of the EncoderModel. The options are EM_BASE which is the baseline encoder, EM_MLP which is with the
 multi-layer perceptron instead of bootstrapped ridge regressions, and EM_GPT2 which is the `distilgpt2` extracted stimulus feeding to the EM.
-
+This script loads the specified pretrained encoder and evaluates it with accuracy metrics (I. Syntax | Classification) beginning from Line 77.
+The metrics include mean-squared-error, residuals-squared which are both voxel-wise measures in this case. The encoder weights can come from
+a regularized bootstrapped linear regression with Ridge L2 (I. Syntax | Classification) on Line 85.
 """
 
 
@@ -33,7 +35,6 @@ from GPT import GPT
 from StimulusModel import LMFeatures
 from utils_stim import get_stim
 from utils_resp import get_resp
-from utils_ridge.ridge import ridge, bootstrap_ridge
 
 
 DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
