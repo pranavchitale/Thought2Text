@@ -31,6 +31,7 @@ import json
 import argparse
 import h5py
 from pathlib import Path
+import transformers
 
 import config
 from GPT import GPT
@@ -48,7 +49,7 @@ if __name__ == "__main__":
     parser.add_argument("--subject", type = str, default = "S1")
     parser.add_argument("--experiment", type = str, default = "perceived_speech")
     parser.add_argument("--task", type = str, default = "wheretheressmoke")
-    parser.add_argument("--variant", type = str, default = "base", choices = ["base", "mlp", "gpt2"])
+    parser.add_argument("--variant", type = str, default = "EM_BASE", choices = ["BASE", "MLP", "GPT2"])
     parser.add_argument("--mlp_path", type = str, default = "", help = "Specify path to checkpoint file if `mlp` variant is selected")
     args = parser.parse_args()
     
@@ -66,7 +67,7 @@ if __name__ == "__main__":
     hf.close()
     
     # load gpt
-    if args.variant == 'base':
+    if args.variant == 'MLP':
         with open(os.path.join(config.DATA_LM_DIR, gpt_checkpoint, "vocab.json"), "r") as f:
             gpt_vocab = json.load(f)
         with open(os.path.join(config.DATA_LM_DIR, "decoder_vocab.json"), "r") as f:
@@ -74,7 +75,7 @@ if __name__ == "__main__":
         gpt = GPT(path = os.path.join(config.DATA_LM_DIR, gpt_checkpoint, "model"), vocab = gpt_vocab, device = config.GPT_DEVICE)
         features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
         lm = LanguageModel(gpt, decoder_vocab, nuc_mass = config.LM_MASS, nuc_ratio = config.LM_RATIO)
-    elif args.variant == 'gpt2':
+    elif args.variant == 'GPT2':
         gpt2_tokenizer = transformers.GPT2Tokenizer.from_pretrained(os.path.join(config.DATA_LM_DIR, 'gpt2_tokenizer'))
         gpt2_word_list = [None] * len(gpt2_tokenizer)
         for token, idx, in gpt2_tokenizer.get_vocab().items():
@@ -93,9 +94,9 @@ if __name__ == "__main__":
     noise_model = encoding_model["noise_model"]
     tr_stats = encoding_model["tr_stats"]
     word_stats = encoding_model["word_stats"]
-    if args.variant == "base":
+    if args.variant == "BASE":
         em = EncodingModel(resp, weights, encoding_model["voxels"], noise_model, device = config.EM_DEVICE)
-    elif args.variant == "mlp":
+    elif args.variant == "MLP":
         em = EncodingModel(resp, weights, encoding_model["voxels"], noise_model, mlp_path = args.mlp_path, device = config.EM_DEVICE)
     em.set_shrinkage(config.NM_ALPHA)
     assert args.task not in encoding_model["stories"]
