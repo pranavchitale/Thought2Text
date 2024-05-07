@@ -17,7 +17,7 @@ Description:
 This file trains the MLP (Multi-Layer Perceptron) which is also known as a (FCNN) Fully-Connected Neural Network (III. Neural Networks)
 starting from Line 111 (III. LM | Transformers). For the EncoderModel and saves its checkpoint file to `mlp_perceived_1e-3_1e-5.pth`
 The paper we referred to uses Linear regression. We believe adding non-linearity in MLP can help the model learn meaningful features.
-We train the MLP using (I.) Gradient Descent using AdamW optimizer with (I.) Weight Decay/Regularization.
+We train the MLP using (I. Gradient Descent) using AdamW optimizer with (I. Regularization) Weight Decay.
 Output file name: mlp_perceived_1e-3_1e-5.pt (format is mlp_perceived_[Learning Rate]_[L2 penalty])
 """
 
