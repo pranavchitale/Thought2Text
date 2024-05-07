@@ -41,6 +41,7 @@ tokenizer.pad_token = tokenizer.eos_token
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
+# Class to store the data
 class cnnDataSet(Dataset):
     def __init__(self, data):
         self.data = data
@@ -56,6 +57,7 @@ class cnnDataSet(Dataset):
     def __getitem__(self, idx):
         return self.input_ids[idx],  self.attention_mask[idx], torch.sum(self.attention_mask[idx])
 
+# Class to store the hyperparameters passed as cmd line args. 
 class HyperParameters():
     def __init__(self, batch_sz=3, learn_rate = 1e-5, wt_decay = 1e-5, num_epochs = 2):
         self.batch_size = batch_sz
@@ -71,6 +73,11 @@ class HyperParameters():
         """
         return self.batch_size, self.learn_rate, self.wt_decay, self.num_epochs
 
+# Most of the articles are of the format "METADATA (LOCATION) -- Article". Some
+# (approx 10%) are not.
+# This function ensures that the article text is split on the first '--', and then
+# if the first string of the split matches the metadata format then the second
+# split string is returned. Else, the entire article string is returned as is. 
 def split_article(art):
     splitstr = re.split(' -- ', art, 1)
     # print(splitstr)
@@ -222,7 +229,7 @@ def main(hyperparams, model_paths):
     
 
     
-
+# Our parser for parsing cmd line arguments for hyperparameters. 
 def initParser():
     parser = argparse.ArgumentParser(
         prog='train-gpt2/train_distilgpt2_cnnDaily.py',
