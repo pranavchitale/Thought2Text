@@ -201,7 +201,7 @@ def trunc_batch(batch):
 
     return input_ids, attention_masks
 
-def plot_loss_curve(losslist, rword, save_title = 'loss_curve_a2_p2.png'):
+def plot_loss_curve(losslist, rword, save_title = 'loss_curve_DistilGPT2.png'):
     l = len(losslist)
     plt.plot(range(l), losslist)
     plt.title(f'Plotting the loss across Iterations for "{rword}" ')    
