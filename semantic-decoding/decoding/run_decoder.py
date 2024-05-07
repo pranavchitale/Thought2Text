@@ -70,7 +70,15 @@ if __name__ == "__main__":
         features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
         lm = LanguageModel(gpt, decoder_vocab, nuc_mass = config.LM_MASS, nuc_ratio = config.LM_RATIO)
     elif args.variant == 'gpt2':
-        pass
+        gpt2_tokenizer = transformers.GPT2Tokenizer.from_pretrained(os.path.join(config.DATA_LM_DIR, 'gpt2_tokenizer'))
+        gpt2_word_list = [None] * len(gpt2_tokenizer)
+        for token, idx, in gpt2_tokenizer.get_vocab().items():
+            gpt2_word_list[idx] = token
+        gpt = GPT(path = os.path.join(config.DATA_LM_DIR, "gpt2_finetuned"), vocab = gpt2_word_list, word2id = gpt2_tokenizer.get_vocab(), device = config.GPT_DEVICE)
+        features = LMFeatures(model = gpt, layer = 4, context_words = config.GPT_WORDS)
+        with open(os.path.join(config.DATA_LM_DIR, "decoder_vocab.json"), "r") as f:
+            decoder_vocab = json.load(f)
+        lm = LanguageModel(gpt, decoder_vocab, nuc_mass = config.LM_MASS, nuc_ratio = config.LM_RATIO)
 
     # load models
     load_location = os.path.join(config.MODEL_DIR, args.subject)
