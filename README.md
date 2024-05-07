@@ -1,6 +1,6 @@
 # Thought2Text
 
-Base code: https://github.com/HuthLab/semantic-decoding
+Base code: https://github.com/HuthLab/semantic-decoding (cite)
 
 We propose a framework aimed at assisting individuals with paralysis who are unable to speak. The motivation behind our research stems from the pressing need to provide these individuals with a means to express themselves effectively. We leverage functional magnetic resonance (fMRI) readings due to their non-invasive spatial and temporal information, as the input for a sequence-to-sequence task and decode them to corresponding text sequences, enabling autoregressive generation of semantic language from neural activity patterns.
 
