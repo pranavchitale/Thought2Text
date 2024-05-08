@@ -6,7 +6,7 @@ Author(s):
 - Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
 
 Usage:
-python3 decoding/evalEMwithGPT2.py --subject S1 --experiment perceived_speech --task wheretheressmoke
+python semantic-decoding/decoding/evalEMwithGPT2.py --subject S1 --experiment perceived_speech --task wheretheressmoke
 
 System Requirements:
 - Operating System: Ubuntu

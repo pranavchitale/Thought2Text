@@ -47,8 +47,8 @@ from utils_stim import predict_word_rate, predict_word_times
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--subject", type = str, default = "S1")
-    parser.add_argument("--experiment", type = str, default = "perceived_speech")
-    parser.add_argument("--task", type = str, default = "wheretheressmoke")
+    parser.add_argument("--experiment", type = str, default = "perceived_speech", choices=["perceived_speech", "imagined_speech"])
+    parser.add_argument("--task", type = str, default = "wheretheressmoke", choices=["alpha", "bravo", "charlie", "delta", "echo"])
     parser.add_argument("--variant", type = str, default = "EM_BASE", choices = ["BASE", "MLP", "GPT2"])
     parser.add_argument("--mlp_path", type = str, default = "", help = "Specify path to checkpoint file if `mlp` variant is selected")
     args = parser.parse_args()
