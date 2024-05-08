@@ -6,8 +6,9 @@ Author(s):
 - Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
 
 Usage:
-$ python semantic-decoding/decoding/run_decoder.py --variant base
-$ python semantic-decoding/decoding/run_decoder.py --variant mlp --mlp_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
+$ python semantic-decoding/decoding/run_decoder.py --variant BASE
+$ python semantic-decoding/decoding/run_decoder.py --variant MLP --mlp_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
+$ python semantic-decoding/decoding/run_decoder.py --experiment imagined_speech --task alpha_repeat-1 --variant BASE
 
 System Requirements:
 - Operating System: Ubuntu
@@ -41,15 +42,16 @@ from EncodingModel import EncodingModel
 from StimulusModel import StimulusModel, get_lanczos_mat, affected_trs, LMFeatures
 from utils_stim import predict_word_rate, predict_word_times
 
-# CUDA_VISIBLE_DEVICES=2 python semantic-decoding/decoding/run_decoder.py --variant base
-# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --variant mlp --mlp_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --variant BASE
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --variant MLP --mlp_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --experiment imagined_speech --task alpha_repeat-1 --variant BASE
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--subject", type = str, default = "S1")
-    parser.add_argument("--experiment", type = str, default = "perceived_speech")
+    parser.add_argument("--experiment", type = str, default = "perceived_speech", choices=["perceived_speech", "imagined_speech"])
     parser.add_argument("--task", type = str, default = "wheretheressmoke")
-    parser.add_argument("--variant", type = str, default = "EM_BASE", choices = ["BASE", "MLP", "GPT2"])
+    parser.add_argument("--variant", type = str, default = "BASE", choices = ["BASE", "MLP", "GPT2"])
     parser.add_argument("--mlp_path", type = str, default = "", help = "Specify path to checkpoint file if `mlp` variant is selected")
     args = parser.parse_args()
     
@@ -67,15 +69,7 @@ if __name__ == "__main__":
     hf.close()
     
     # load gpt
-    if args.variant == 'MLP':
-        with open(os.path.join(config.DATA_LM_DIR, gpt_checkpoint, "vocab.json"), "r") as f:
-            gpt_vocab = json.load(f)
-        with open(os.path.join(config.DATA_LM_DIR, "decoder_vocab.json"), "r") as f:
-            decoder_vocab = json.load(f)
-        gpt = GPT(path = os.path.join(config.DATA_LM_DIR, gpt_checkpoint, "model"), vocab = gpt_vocab, device = config.GPT_DEVICE)
-        features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
-        lm = LanguageModel(gpt, decoder_vocab, nuc_mass = config.LM_MASS, nuc_ratio = config.LM_RATIO)
-    elif args.variant == 'GPT2':
+    if args.variant == 'GPT2':
         gpt2_tokenizer = transformers.GPT2Tokenizer.from_pretrained(os.path.join(config.DATA_LM_DIR, 'gpt2_tokenizer'))
         gpt2_word_list = [None] * len(gpt2_tokenizer)
         for token, idx, in gpt2_tokenizer.get_vocab().items():
@@ -85,11 +79,19 @@ if __name__ == "__main__":
         with open(os.path.join(config.DATA_LM_DIR, "decoder_vocab.json"), "r") as f:
             decoder_vocab = json.load(f)
         lm = LanguageModel(gpt, decoder_vocab, nuc_mass = config.LM_MASS, nuc_ratio = config.LM_RATIO)
+    else:
+        with open(os.path.join(config.DATA_LM_DIR, gpt_checkpoint, "vocab.json"), "r") as f:
+            gpt_vocab = json.load(f)
+        with open(os.path.join(config.DATA_LM_DIR, "decoder_vocab.json"), "r") as f:
+            decoder_vocab = json.load(f)
+        gpt = GPT(path = os.path.join(config.DATA_LM_DIR, gpt_checkpoint, "model"), vocab = gpt_vocab, device = config.GPT_DEVICE)
+        features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
+        lm = LanguageModel(gpt, decoder_vocab, nuc_mass = config.LM_MASS, nuc_ratio = config.LM_RATIO)
 
     # load models
     load_location = os.path.join(config.MODEL_DIR, args.subject)
     word_rate_model = np.load(os.path.join(load_location, "word_rate_model_%s.npz" % word_rate_voxels), allow_pickle = True)
-    encoding_model = np.load(os.path.join(load_location, "encoding_model_%s.npz" % gpt_checkpoint))
+    encoding_model = np.load(os.path.join(load_location, f"encoder_{gpt_checkpoint}_{args.variant if args.variant == 'GPT2' else 'BASE'}.npz"))
     weights = encoding_model["weights"]
     noise_model = encoding_model["noise_model"]
     tr_stats = encoding_model["tr_stats"]

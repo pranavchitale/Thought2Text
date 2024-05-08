@@ -6,8 +6,8 @@ Author(s):
 - Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
 
 Usage:
-$ python semantic-decoding/decoding/eval_encoders.py --model EM_BASE --load_path semantic-decoding/models/S1/encoding_model_perceived.npz
-$ python semantic-decoding/decoding/eval_encoders.py --model EM_MLP --load_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
+$ python semantic-decoding/decoding/eval_encoders.py --model BASE --load_path semantic-decoding/models/S1/encoding_model_perceived.npz
+$ python semantic-decoding/decoding/eval_encoders.py --model MLP --load_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
 
 System Requirements:
 - Operating System: Ubuntu
@@ -15,8 +15,8 @@ System Requirements:
 - Dependencies: (conda) environment.yaml
 
 Description:
-This file evaluates different variations of the EncoderModel. The options are EM_BASE which is the baseline encoder, EM_MLP which is with the
-multi-layer perceptron instead of bootstrapped ridge regressions, and EM_GPT2 which is the `distilgpt2` extracted stimulus feeding to the EM.
+This file evaluates different variations of the EncoderModel. The options are BASE which is the baseline encoder, MLP which is with the
+multi-layer perceptron instead of bootstrapped ridge regressions, and GPT2 which is the `distilgpt2` extracted stimulus feeding to the EM.
 This script loads the specified pretrained encoder and evaluates it with accuracy metrics (I. Syntax | Classification) beginning from Line 77.
 The metrics include mean-squared-error, residuals-squared which are both voxel-wise measures in this case. The encoder weights can come from
 a regularized bootstrapped linear regression with Ridge L2 (I. Syntax | Classification) on Line 85.
@@ -40,10 +40,10 @@ from utils_resp import get_resp
 DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 np.random.seed(42)
 
-# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --model EM_BASE --load_path semantic-decoding/models/S1/encoding_model_perceived.npz
-#   EM_BASE (voxel-wise MSE): 0.9394
-# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --model EM_MLP --load_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
-#   EM_MLP (voxel-wise MSE): 0.7740
+# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --model BASE --load_path semantic-decoding/models/S1/encoding_model_perceived.npz
+#   BASE (voxel-wise MSE): 0.9394
+# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --model MLP --load_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
+#   MLP (voxel-wise MSE): 0.7740
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     parser.add_argument("--gpt", type = str, default = "perceived", choices=["perceived", "imagined"])
     parser.add_argument("--sessions", nargs = "+", type = int, 
         default = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 20])
-    parser.add_argument("--model", type = str, default = "EM_BASE", choices=["EM_BASE", "EM_MLP", "EM_GPT2"])
+    parser.add_argument("--model", type = str, default = "BASE", choices=["BASE", "MLP", "GPT2"])
     parser.add_argument("--load_path", type = str, required=True, help="Specify path to load checkpoint parameters")
     args = parser.parse_args()
 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=False)
 
     print(f"Beginning Evaluation with {args.model}")
-    if args.model == "EM_BASE":
+    if args.model == "BASE":
         rstim = torch.from_numpy(rstim).float().to(DEVICE)
         rresp = torch.from_numpy(rresp).float().to(DEVICE)
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
         mse = calc_loss(presp, rresp)
         print("Overall MSE (voxel-wise):", mse.item())
 
-    elif args.model == "EM_MLP":
+    elif args.model == "MLP":
         model = MLP(3072, config.VOXELS).to(DEVICE)
 
         # Load weights

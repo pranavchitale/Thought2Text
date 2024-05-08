@@ -15,7 +15,7 @@ np.random.seed(42)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--subject", type = str, required = True)
+    parser.add_argument("--subject", type = str, default = "S1")
     parser.add_argument("--gpt", type = str, default = "perceived")
     parser.add_argument("--sessions", nargs = "+", type = int, 
         default = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 20])
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     rresp = get_resp(args.subject, stories, stack = True)
     nchunks = int(np.ceil(rresp.shape[0] / 5 / config.CHUNKLEN))
     weights, alphas, bscorrs = bootstrap_ridge(rstim, rresp, use_corr = False, alphas = config.ALPHAS,
-        nboots = config.NBOOTS, chunklen = config.CHUNKLEN, nchunks = nchunks)        
+        nboots = config.NBOOTS, chunklen = config.CHUNKLEN, nchunks = nchunks)
     bscorrs = bscorrs.mean(2).max(0)
     vox = np.sort(np.argsort(bscorrs)[-config.VOXELS:])
     del rstim, rresp

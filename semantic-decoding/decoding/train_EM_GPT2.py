@@ -1,12 +1,12 @@
 """
-Filename: evalEMwithGPT2.py
+Filename: train_EM_GPT2.py
 Author(s): 
 - Rajath Rao (rajath.rao@stonybrook.edu)
 - Pranav Chitale (pranavshailesh.chitale@stonybrook.edu)
 - Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
 
 Usage:
-python3 decoding/evalEMwithGPT2.py --subject S1 --experiment perceived_speech --task wheretheressmoke
+$ python semantic-decoding/decoding/train_EM_GPT2.py --gpt perceived --lm_path gpt2/models/gpt2_99_0.001_1e-05.pth --tk_path distilgpt2 --save encoder_perceived_GPT2
 
 System Requirements:
 - Operating System: Ubuntu
@@ -40,12 +40,17 @@ import torch, tqdm
 import matplotlib.pyplot as plt
 import transformers
 
+# Experiments:
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/train_EM_GPT2.py --gpt perceived --lm_path gpt2/models/gpt2_99_0.001_1e-05.pth --tk_path distilgpt2 --save encoder_perceived_GPT2
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--subject", type = str, required = True)
+parser.add_argument("--subject", type = str, default = "S1")
 parser.add_argument("--gpt", type = str, default = "perceived")
 parser.add_argument("--sessions", nargs = "+", type = int, default = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 20])
-args = parser.parse_args("--subject S1".split())
+parser.add_argument("--lm_path", type = str, required = True, help="specify path to GPT2 model checkpoint file")
+parser.add_argument("--tk_path", type = str, required = True, help="specify path to GPT2 tokenizer checkpoint file")
+parser.add_argument("--save", type = str, required = True, help="specify a filename to save the trained encoder model")
+args = parser.parse_args()
 
 
 # training stories (inputs)
@@ -55,14 +60,10 @@ with open(os.path.join(config.DATA_TRAIN_DIR, "sess_to_story.json"), "r") as f:
 for sess in args.sessions:
     stories.extend(sess_to_story[str(sess)])
 
-
 # converting vocab to ordered list and dict format to fit into author code
-gpt2_tokenizer = transformers.GPT2Tokenizer.from_pretrained(os.path.join(config.DATA_LM_DIR, 'gpt2_tokenizer'))
-gpt2_word_list = [None] * len(gpt2_tokenizer)
-for token, idx, in gpt2_tokenizer.get_vocab().items():
-    gpt2_word_list[idx] = token
+gpt2_tokenizer = transformers.GPT2Tokenizer.from_pretrained(args.tk_path, cache_dir='cache/')
 
-gpt = GPT(path = os.path.join(config.DATA_LM_DIR, "gpt2_finetuned"), vocab = gpt2_word_list, word2id = gpt2_tokenizer.get_vocab(), device = config.GPT_DEVICE)
+gpt = GPT(path = args.lm_path, vocab = gpt2_tokenizer.get_vocab(), device = config.GPT_DEVICE)
 
 # using layer = 4, i.e. second last layer of distilgpt2 for extracting embeddings
 features = LMFeatures(model = gpt, layer = 4, context_words = config.GPT_WORDS)
@@ -98,6 +99,6 @@ for hstory in stories:
 # save
 save_location = os.path.join(config.MODEL_DIR, args.subject)
 os.makedirs(save_location, exist_ok = True)
-np.savez(os.path.join(save_location, "gpt2_encoding_model_%s" % args.gpt), 
+np.savez(os.path.join(save_location, args.save), 
     weights = weights, noise_model = noise_model, alphas = alphas, voxels = vox, stories = stories,
     tr_stats = np.array(tr_stats), word_stats = np.array(word_stats))
