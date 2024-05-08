@@ -7,7 +7,7 @@ from transformers import GPT2LMHeadModel, GPT2TokenizerFast, get_scheduler
 from matplotlib import pyplot as plt
 from dataset import StoryDataset
 
-# CUDA_VISIBLE_DEVICES=0,1,2 python gpt2/train.py --num_epochs 1 --batch_size 4 --save_path 'nothing'
+# CUDA_VISIBLE_DEVICES=0,1,2 python gpt2/train.py --num_epochs 150 --batch_size 8 --lr 5e-4 --wd 1e-5 > gpt2/exps/gpt2_150_5e-4_1e-5.txt
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Load GPT2 Tokenizer
-    tokenizer = GPT2TokenizerFast.from_pretrained('distilgpt2', cache_dir="cache/")
+    tokenizer = GPT2TokenizerFast.from_pretrained('distilgpt2', cache_dir='cache/')
     tokenizer.pad_token = tokenizer.eos_token # token_id: 50256
     
     # Prepare datasets
