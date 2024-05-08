@@ -6,7 +6,7 @@ Author(s):
 - Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
 
 Usage:
-$ python semantic-decoding/decoding/train_EM_GPT2.py --gpt perceived --lm_path gpt2/models/gpt2_99_0.001_1e-05.pth --tk_path distilgpt2 --save encoder_perceived_GPT2
+$ python semantic-decoding/decoding/train_EM_GPT2.py --gpt perceived --lm_path gpt2/models/gpt2_99_0.001_1e-05 --tk_path distilgpt2 --save encoder_perceived_GPT2
 
 System Requirements:
 - Operating System: Ubuntu
@@ -22,10 +22,9 @@ Saves resultant file to models/[subject]/encoding_model_[task].npz
 """
 
 
-import os
+import os, argparse, json
 import numpy as np
-import json
-import argparse
+import transformers
 
 import config
 from GPT import GPT
@@ -36,12 +35,9 @@ from utils_ridge.ridge import ridge, bootstrap_ridge
 np.random.seed(42)
 
 
-import torch, tqdm
-import matplotlib.pyplot as plt
-import transformers
-
 # Experiments:
-# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/train_EM_GPT2.py --gpt perceived --lm_path gpt2/models/gpt2_99_0.001_1e-05.pth --tk_path distilgpt2 --save encoder_perceived_GPT2
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/train_EM_GPT2.py --gpt perceived --lm_path gpt2/models/gpt2_1_0.0005_1e-05 --tk_path distilgpt2 --save encoder_perceived_GPT2
+# CUDA_VISIBLE_DEVICES=2 python semantic-decoding/decoding/train_EM_GPT2.py --gpt imagined --lm_path gpt2/models/gpt2_1_0.0005_1e-05 --tk_path distilgpt2 --save encoder_imagined_GPT2
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--subject", type = str, default = "S1")

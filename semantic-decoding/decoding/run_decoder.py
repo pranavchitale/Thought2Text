@@ -6,9 +6,10 @@ Author(s):
 - Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
 
 Usage:
-$ python semantic-decoding/decoding/run_decoder.py --variant BASE
-$ python semantic-decoding/decoding/run_decoder.py --variant MLP --mlp_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
-$ python semantic-decoding/decoding/run_decoder.py --experiment imagined_speech --task alpha_repeat-1 --variant BASE
+$ python semantic-decoding/decoding/run_decoder.py --stimulus BASE --variant BASE
+$ python semantic-decoding/decoding/run_decoder.py --stimulus BASE --variant MLP --mlp_path semantic-decoding/models/S1/MLP_BASE_1e-3_1e-5.pth
+$ python semantic-decoding/decoding/run_decoder.py --stimulus GPT2 --variant BASE
+$ python semantic-decoding/decoding/run_decoder.py --stimulus GPT2 --variant MLP --mlp_path semantic-decoding/models/S1/MLP_GPT2_1e-3_1e-5.pth
 
 System Requirements:
 - Operating System: Ubuntu
@@ -42,16 +43,33 @@ from EncodingModel import EncodingModel
 from StimulusModel import StimulusModel, get_lanczos_mat, affected_trs, LMFeatures
 from utils_stim import predict_word_rate, predict_word_times
 
-# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --variant BASE
-# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --variant MLP --mlp_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
-# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --experiment imagined_speech --task alpha_repeat-1 --variant BASE
+
+# Experiments:
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --stimulus BASE --variant BASE
+#   Done.
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --stimulus BASE --variant MLP --mlp_path semantic-decoding/models/S1/MLP_BASE_1e-3_1e-5.pth
+#   Done.
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --stimulus GPT2 --variant BASE
+#   To Do.
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --stimulus GPT2 --variant MLP --mlp_path semantic-decoding/models/S1/MLP_GPT2_1e-3_1e-5.pth
+#   To Do.
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --experiment imagined_speech --task alpha_repeat-1 --stimulus BASE --variant BASE
+#   To Do.
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --experiment imagined_speech --task alpha_repeat-1 --stimulus BASE --variant MLP --mlp_path semantic-decoding/models/S1/MLP_BASE_1e-3_1e-5.pth
+#   To Do.
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --experiment imagined_speech --task alpha_repeat-1 --stimulus GPT2 --variant BASE
+#   To Do.
+# CUDA_VISIBLE_DEVICES=3 python semantic-decoding/decoding/run_decoder.py --experiment imagined_speech --task alpha_repeat-1 --stimulus GPT2 --variant MLP --mlp_path semantic-decoding/models/S1/MLP_GPT2_1e-3_1e-5.pth
+#   To Do.
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--subject", type = str, default = "S1")
     parser.add_argument("--experiment", type = str, default = "perceived_speech", choices=["perceived_speech", "imagined_speech"])
     parser.add_argument("--task", type = str, default = "wheretheressmoke")
-    parser.add_argument("--variant", type = str, default = "BASE", choices = ["BASE", "MLP", "GPT2"])
+    parser.add_argument("--variant", type = str, default = "BASE", choices = ["BASE", "MLP"])
+    parser.add_argument("--stimulus", type = str, default = "BASE", choices = ["BASE", "GPT2"])
     parser.add_argument("--mlp_path", type = str, default = "", help = "Specify path to checkpoint file if `mlp` variant is selected")
     args = parser.parse_args()
     
@@ -69,12 +87,13 @@ if __name__ == "__main__":
     hf.close()
     
     # load gpt
-    if args.variant == 'GPT2':
-        gpt2_tokenizer = transformers.GPT2Tokenizer.from_pretrained(os.path.join(config.DATA_LM_DIR, 'gpt2_tokenizer'))
+    if args.stimulus == 'GPT2':
+        gpt2_tokenizer = transformers.GPT2Tokenizer.from_pretrained('distilgpt2', cache_dir='cache/')
         gpt2_word_list = [None] * len(gpt2_tokenizer)
         for token, idx, in gpt2_tokenizer.get_vocab().items():
             gpt2_word_list[idx] = token
-        gpt = GPT(path = os.path.join(config.DATA_LM_DIR, "gpt2_finetuned"), vocab = gpt2_word_list, word2id = gpt2_tokenizer.get_vocab(), device = config.GPT_DEVICE)
+        gpt2_pretrained_path = 'gpt2/models/gpt2_200_0.0005_1e-05' # change this path if needed
+        gpt = GPT(path = gpt2_pretrained_path, vocab = gpt2_word_list, word2id = gpt2_tokenizer.get_vocab(), device = config.GPT_DEVICE)
         features = LMFeatures(model = gpt, layer = 4, context_words = config.GPT_WORDS)
         with open(os.path.join(config.DATA_LM_DIR, "decoder_vocab.json"), "r") as f:
             decoder_vocab = json.load(f)
@@ -91,7 +110,7 @@ if __name__ == "__main__":
     # load models
     load_location = os.path.join(config.MODEL_DIR, args.subject)
     word_rate_model = np.load(os.path.join(load_location, "word_rate_model_%s.npz" % word_rate_voxels), allow_pickle = True)
-    encoding_model = np.load(os.path.join(load_location, f"encoder_{gpt_checkpoint}_{args.variant if args.variant == 'GPT2' else 'BASE'}.npz"))
+    encoding_model = np.load(os.path.join(load_location, f"encoder_{gpt_checkpoint}_{args.stimulus}.npz"))
     weights = encoding_model["weights"]
     noise_model = encoding_model["noise_model"]
     tr_stats = encoding_model["tr_stats"]
@@ -130,4 +149,4 @@ if __name__ == "__main__":
     if args.experiment in ["perceived_movie", "perceived_multispeaker"]: decoder.word_times += 10
     save_location = os.path.join(config.RESULT_DIR, args.subject, args.experiment)
     os.makedirs(save_location, exist_ok = True)
-    decoder.save(os.path.join(save_location, f"{args.task}_{args.variant}"))
+    decoder.save(os.path.join(save_location, f"{args.task}_{args.stimulus}_{args.variant}"))

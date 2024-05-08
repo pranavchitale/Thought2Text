@@ -7,7 +7,7 @@ Author(s):
 
 Usage:
 $ python semantic-decoding/decoding/eval_encoders.py --model BASE --load_path semantic-decoding/models/S1/encoding_model_perceived.npz
-$ python semantic-decoding/decoding/eval_encoders.py --model MLP --load_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
+$ python semantic-decoding/decoding/eval_encoders.py --model MLP --load_path semantic-decoding/models/S1/mlp_base_1e-3_1e-5.pth
 
 System Requirements:
 - Operating System: Ubuntu
@@ -42,7 +42,7 @@ np.random.seed(42)
 
 # CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --model BASE --load_path semantic-decoding/models/S1/encoding_model_perceived.npz
 #   BASE (voxel-wise MSE): 0.9394
-# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --model MLP --load_path semantic-decoding/models/S1/mlp_perceived_1e-3_1e-5.pth
+# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --model MLP --load_path semantic-decoding/models/S1/mlp_base_1e-3_1e-5.pth
 #   MLP (voxel-wise MSE): 0.7740
 
 if __name__ == "__main__":

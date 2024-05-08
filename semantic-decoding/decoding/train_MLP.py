@@ -6,7 +6,8 @@ Author(s):
 - Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
 
 Usage:
-$ python semantic-decoding/decoding/train_MLP.py --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5 --save_name mlp_perceived_1e-3_1e-5.pth
+$ python semantic-decoding/decoding/train_MLP.py --stimulus BASE --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5 > semantic-decoding/exps/MLP_BASE_1e-3_1e-5.txt
+$ python semantic-decoding/decoding/train_MLP.py --stimulus GPT2 --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5 > semantic-decoding/exps/MLP_GPT2_1e-3_1e-5.txt
 
 System Requirements:
 - Operating System: Ubuntu
@@ -15,10 +16,10 @@ System Requirements:
 
 Description:
 This file trains the MLP (Multi-Layer Perceptron) which is also known as a (FCNN) Fully-Connected Neural Network (III. Neural Networks)
-starting from Line 111 (III. LM | Transformers). For the EncoderModel and saves its checkpoint file to `mlp_perceived_1e-3_1e-5.pth`
+starting from Line 111 (III. LM | Transformers). For the EncoderModel and saves its checkpoint file to `mlp_base_1e-3_1e-5.pth`
 The paper we referred to uses Linear regression. We believe adding non-linearity in MLP can help the model learn meaningful features.
 We train the MLP using (I. Gradient Descent) using AdamW optimizer with (I. Regularization) Weight Decay.
-Output file name: mlp_perceived_1e-3_1e-5.pt (format is mlp_perceived_[Learning Rate]_[L2 penalty])
+Output file name: mlp_base_1e-3_1e-5.pt (format is mlp_base_[Learning Rate]_[L2 penalty])
 """
 
 
@@ -34,10 +35,12 @@ from GPT import GPT
 from StimulusModel import LMFeatures
 from utils_stim import get_stim
 from utils_resp import get_resp
-from utils_ridge.ridge import ridge, bootstrap_ridge
+
 
 # Experiments:
-# CUDA_VISIBLE_DEVICES=1,2,3 python semantic-decoding/decoding/train_MLP.py --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5 --save_name mlp_perceived_1e-3_1e-5.pth > semantic-decoding/exps/mlp_1e-3_1e-5.txt
+# CUDA_VISIBLE_DEVICES=1,2,3 python semantic-decoding/decoding/train_MLP.py --stimulus BASE --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5 > semantic-decoding/exps/MLP_BASE_1e-3_1e-5.txt
+# CUDA_VISIBLE_DEVICES=1,2,3 python semantic-decoding/decoding/train_MLP.py --stimulus GPT2 --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5 > semantic-decoding/exps/MLP_GPT2_1e-3_1e-5.txt
+
 
 DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 np.random.seed(42)
@@ -80,12 +83,12 @@ if __name__ == '__main__':
     parser.add_argument("--subject", type = str, default = "S1")
     parser.add_argument("--gpt", type = str, default = "perceived")
     parser.add_argument("--sessions", nargs = "+", type = int, default = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 20])
+    parser.add_argument("--stimulus", type = str, default = "BASE", choices = ["BASE", "GPT2"])
     parser.add_argument("--num_epochs", type = int, default = 10)
     parser.add_argument("--batch_size", type = int, default = 64)
     parser.add_argument("--lr", type = float, default = 0.01)
     parser.add_argument("--wd", type = float, default = 0.1)
     parser.add_argument("--load_path", type = str, default="", help="specify filepath to pretrained model to resume training")
-    parser.add_argument("--save_name", type = str, default="", help="specify a filename to save model after training. if empty, it will not save...\t[e.g. `mlp_perceived_01.pth`]")
     args = parser.parse_args()
 
     # training stories
@@ -102,7 +105,7 @@ if __name__ == '__main__':
     features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
 
     # load stimulus + responses data
-    em_cp = np.load(os.path.join(config.MODEL_DIR, args.subject, f"encoding_model_{args.gpt}.npz"))
+    em_cp = np.load(os.path.join(config.MODEL_DIR, args.subject, f"encoder_{args.gpt}_{args.stimulus}.npz"))
     rstim, tr_stats, word_stats = get_stim(stories, features)
     rresp = get_resp(args.subject, stories, stack = True)[:, em_cp["voxels"]]
     train_dataset = FMRIDataset(rstim, rresp)
@@ -140,9 +143,8 @@ if __name__ == '__main__':
         print(f'Epoch {epoch + 1}/{args.num_epochs}\tAverage Loss: {np.mean(batch_losses)}\t')
 
     # Save Model
-    if args.save_name:
-        save_location = os.path.join(config.MODEL_DIR, args.subject)
-        os.makedirs(save_location, exist_ok = True)
-        torch.save(model.state_dict(), os.path.join(save_location, args.save_name))
+    save_location = os.path.join(config.MODEL_DIR, args.subject)
+    os.makedirs(save_location, exist_ok = True)
+    torch.save(model.state_dict(), os.path.join(save_location, f'MLP_{args.stimulus}_{args.lr}_{args.wd}.pth'))
     
 
