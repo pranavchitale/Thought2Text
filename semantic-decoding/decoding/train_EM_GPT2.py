@@ -62,8 +62,10 @@ for sess in args.sessions:
 
 # converting vocab to ordered list and dict format to fit into author code
 gpt2_tokenizer = transformers.GPT2Tokenizer.from_pretrained(args.tk_path, cache_dir='cache/')
-
-gpt = GPT(path = args.lm_path, vocab = gpt2_tokenizer.get_vocab(), device = config.GPT_DEVICE)
+gpt2_word_list = [None] * len(gpt2_tokenizer)
+for token, idx, in gpt2_tokenizer.get_vocab().items():
+    gpt2_word_list[idx] = token
+gpt = GPT(path = args.lm_path, vocab = gpt2_word_list, word2id = gpt2_tokenizer.get_vocab(), device = config.GPT_DEVICE)
 
 # using layer = 4, i.e. second last layer of distilgpt2 for extracting embeddings
 features = LMFeatures(model = gpt, layer = 4, context_words = config.GPT_WORDS)
