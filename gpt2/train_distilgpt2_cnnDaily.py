@@ -7,7 +7,7 @@ Author(s):
 
 Usage:
 $ python3 gpt2/train_distilgpt2_cnnDaily.py [-h] [-b [BATCHSZ]] [-l [LRNRATE]] [-w [WTDECAY]] [-e [EPOCHS]] [-s [SAVEPATH]]
-Our parameters: python3 gpt2/train_distilgpt2_cnnDaily.py -b 8 -l 5e-7 -w 1e-2 -e 2
+EX) python3 gpt2/train_distilgpt2_cnnDaily.py -b 8 -l 5e-7 -w 1e-2 -e 2
 
 System Requirements:
 - Operating System: Ubuntu
@@ -32,43 +32,21 @@ from tqdm.auto import tqdm
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torch.optim import AdamW
-import transformers
 from transformers import GPT2LMHeadModel, GPT2TokenizerFast, get_scheduler
 from datasets import load_dataset
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+from dataset import CNNDataset
+
+DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
 
 # https://huggingface.co/datasets/cnn_dailymail - Can/need to cite this
 dataset = load_dataset('cnn_dailymail', '3.0.0')
 
-modelname = 'distilbert/distilgpt2'
-gpt2_tokenizer = GPT2TokenizerFast.from_pretrained('distilgpt2')
-gpt2_model = GPT2LMHeadModel.from_pretrained('distilbert/distilgpt2')
-
-
-# tokenizer = AutoTokenizer.from_pretrained(modelname)
-# model = AutoModelForSeq2SeqLM.from_pretrained(modelname)
-model = gpt2_model
-tokenizer = gpt2_tokenizer
+model = GPT2LMHeadModel.from_pretrained('distilbert/distilgpt2')
+tokenizer = GPT2TokenizerFast.from_pretrained('distilgpt2')
 tokenizer.pad_token = tokenizer.eos_token
 
-device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-
-# Class to store the data
-class cnnDataSet(Dataset):
-    def __init__(self, data):
-        self.data = data
-        self.id = self.data['id']
-        self.article = self.data['article']
-        self.highlights = self.data['highlights']
-        self.input_ids = torch.tensor(self.data['input_ids'])
-        self.attention_mask = torch.tensor(self.data['attention_mask'])
-
-    def __len__(self):
-        return len(self.input_ids)
-
-    def __getitem__(self, idx):
-        return self.input_ids[idx],  self.attention_mask[idx], torch.sum(self.attention_mask[idx])
 
 # Class to store the hyperparameters passed as cmd line args. 
 class HyperParameters():
@@ -77,7 +55,6 @@ class HyperParameters():
         self.num_epochs = num_epochs
         self.learn_rate = learn_rate
         self.wt_decay = wt_decay
-        pass
 
     def get_hyperparam(self):
         """
@@ -102,15 +79,12 @@ def split_article(art):
 
     
 def tokenize_str(examples):
-
     inputs = [split_article(art) for art in examples['article']]
+    return tokenizer(inputs, max_length=1024, padding='max_length', truncation=True, return_tensors='pt')
 
-    model_inputs = tokenizer(inputs, max_length=1024, truncation=True, return_tensors='pt', padding='max_length')
-
-    return model_inputs
 
 # In this method, we use [III. Transformers] to finetune a DistilGPT2 model
-def train_model(train_dataset, plot_loss_curves=True, model=gpt2_model, hyperparams=HyperParameters()):
+def train_model(train_dataset, plot_loss_curves=True, model=model, hyperparams=HyperParameters()):
     '''
     Method to fine tune and train the passed model
     Returns nothing
@@ -121,12 +95,12 @@ def train_model(train_dataset, plot_loss_curves=True, model=gpt2_model, hyperpar
 
     train_dataloader = DataLoader(train_dataset, batch_size=batch_sz)
 
-    # torch.set_default_device(device)
+    # torch.set_default_device(DEVICE)
     
     # model.to(dtype=torch.float16)
-    model.to(device)
+    model.to(DEVICE)
     optimizer = AdamW(model.parameters(), lr=learn_rate, weight_decay=wt_decay)
-    # lossfunc = binary_cross_entropy_with_logits().to(device)
+    # lossfunc = binary_cross_entropy_with_logits().to(DEVICE)
     # print(model.parameters())
     dataloader_len = len(train_dataloader)
     num_training_steps = num_epochs * dataloader_len
@@ -151,7 +125,6 @@ def train_model(train_dataset, plot_loss_curves=True, model=gpt2_model, hyperpar
         for  batch_idx, batch in enumerate(train_dataloader):
             with torch.set_grad_enabled(True):
 
-
                 max_valid_input, max_valid_attention = trunc_batch(batch)
                 if ((batch_idx + 1) % accum_iter == 0) or (batch_idx + 1 == dataloader_len):                    
                     optimizer.zero_grad()
@@ -159,9 +132,9 @@ def train_model(train_dataset, plot_loss_curves=True, model=gpt2_model, hyperpar
                 with torch.cuda.amp.autocast():
                     
                     output = model(
-                                   input_ids = max_valid_input.to(device),
-                                   attention_mask=max_valid_attention.to(device),
-                                   labels=max_valid_input.to(device)
+                                   input_ids = max_valid_input.to(DEVICE),
+                                   attention_mask=max_valid_attention.to(DEVICE),
+                                   labels=max_valid_input.to(DEVICE)
                                    )
                     loss = output.loss/accum_iter
                 
@@ -215,7 +188,7 @@ def main(hyperparams, model_paths):
     tokenized_train = train.map(tokenize_str, batched=True)
     tokenized_test = test.map(tokenize_str, batched=True)
 
-    tokenized_train_dataset = cnnDataSet(tokenized_train)
+    tokenized_train_dataset = CNNDataset(tokenized_train)
     train_model(tokenized_train_dataset, plot_loss_curves=True, model=model, hyperparams=hyperparams)
     
     # https://pytorch.org/tutorials/beginner/saving_loading_models.html
