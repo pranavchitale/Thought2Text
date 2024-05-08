@@ -6,11 +6,11 @@ from torch.nn.functional import softmax
 class GPT():    
     """wrapper for https://huggingface.co/openai-gpt
     """
-    def __init__(self, path, vocab, device = 'cpu'): 
+    def __init__(self, path, vocab, word2id=None, device = 'cpu'): 
         self.device = device
         self.model = AutoModelForCausalLM.from_pretrained(path).eval().to(self.device)
         self.vocab = vocab
-        self.word2id = {w : i for i, w in enumerate(self.vocab)}
+        self.word2id = word2id if word2id != None else {w : i for i, w in enumerate(self.vocab)}
         self.UNK_ID = self.word2id['<unk>']
 
     def encode(self, words):
