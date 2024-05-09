@@ -6,8 +6,10 @@ Author(s):
 - Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
 
 Usage:
-$ python semantic-decoding/decoding/eval_encoders.py --model BASE --load_path semantic-decoding/models/S1/encoding_model_perceived.npz
-$ python semantic-decoding/decoding/eval_encoders.py --model MLP --load_path semantic-decoding/models/S1/mlp_base_1e-3_1e-5.pth
+$ python semantic-decoding/decoding/eval_encoders.py --stimulus BASE --variant BASE
+$ python semantic-decoding/decoding/eval_encoders.py --stimulus BASE --variant MLP --mlp_path semantic-decoding/models/S1/MLP_BASE_1e-3_1e-5.pth
+$ python semantic-decoding/decoding/eval_encoders.py --stimulus GPT2 --variant BASE
+$ python semantic-decoding/decoding/eval_encoders.py --stimulus GPT2 --variant MLP --mlp_path semantic-decoding/models/S1/MLP_GPT2_1e-3_1e-5.pth
 
 System Requirements:
 - Operating System: Ubuntu
@@ -28,6 +30,7 @@ import numpy as np
 import json
 import argparse
 import torch
+import transformers
 
 import config
 from train_MLP import FMRIDataset, MLP, calc_loss
@@ -40,10 +43,18 @@ from utils_resp import get_resp
 DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 np.random.seed(42)
 
-# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --model BASE --load_path semantic-decoding/models/S1/encoding_model_perceived.npz
-#   BASE (voxel-wise MSE): 0.9394
-# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --model MLP --load_path semantic-decoding/models/S1/mlp_base_1e-3_1e-5.pth
-#   MLP (voxel-wise MSE): 0.7740
+# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --stimulus BASE --variant BASE
+#   Overall MSE (voxel-wise): 0.9393559098243713
+#   Overall MAE (voxel-wise): 0.7574178576469421
+# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --stimulus BASE --variant MLP --mlp_path semantic-decoding/models/S1/MLP_BASE_1e-3_1e-5.pth
+#   Overall MSE (voxel-wise): 0.7740427255630493
+#   Overall MAE (voxel-wise): 0.6959194540977478
+# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --stimulus GPT2 --variant BASE
+#   Overall MSE (voxel-wise): 0.978938639163971
+#   Overall MAE (voxel-wise): 0.7733919620513916
+# CUDA_VISIBLE_DEVICES=1 python semantic-decoding/decoding/eval_encoders.py --stimulus GPT2 --variant MLP --mlp_path semantic-decoding/models/S1/MLP_GPT2_100_0.0005_1e-05.pth
+#   Overall MSE (voxel-wise): 0.692783534526825
+#   Overall MAE (voxel-wise): 0.6567291617393494
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -51,8 +62,9 @@ if __name__ == "__main__":
     parser.add_argument("--gpt", type = str, default = "perceived", choices=["perceived", "imagined"])
     parser.add_argument("--sessions", nargs = "+", type = int, 
         default = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 20])
-    parser.add_argument("--model", type = str, default = "BASE", choices=["BASE", "MLP", "GPT2"])
-    parser.add_argument("--load_path", type = str, required=True, help="Specify path to load checkpoint parameters")
+    parser.add_argument("--stimulus", type = str, default = "BASE", choices = ["BASE", "GPT2"])
+    parser.add_argument("--variant", type = str, default = "BASE", choices=["BASE", "MLP"])
+    parser.add_argument("--mlp_path", type = str, help="Specify path to load MLP checkpoint...")
     args = parser.parse_args()
 
     # training stories
@@ -63,20 +75,29 @@ if __name__ == "__main__":
         stories.extend(sess_to_story[str(sess)])
 
     # load gpt
-    with open(os.path.join(config.DATA_LM_DIR, args.gpt, "vocab.json"), "r") as f:
-        gpt_vocab = json.load(f)
-    gpt = GPT(path = os.path.join(config.DATA_LM_DIR, args.gpt, "model"), vocab = gpt_vocab, device = config.GPT_DEVICE)
-    features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
+    if args.stimulus == 'BASE':
+        with open(os.path.join(config.DATA_LM_DIR, args.gpt, "vocab.json"), "r") as f:
+            gpt_vocab = json.load(f)
+        gpt = GPT(path = os.path.join(config.DATA_LM_DIR, args.gpt, "model"), vocab = gpt_vocab, device = config.GPT_DEVICE)
+        features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
+    else:
+        gpt2_tokenizer = transformers.GPT2Tokenizer.from_pretrained('distilgpt2', cache_dir='cache/')
+        gpt2_word_list = [None] * len(gpt2_tokenizer)
+        for token, idx, in gpt2_tokenizer.get_vocab().items():
+            gpt2_word_list[idx] = token
+        gpt2_pretrained_path = 'gpt2/models/gpt2_200_0.0005_1e-05' # change this path if needed
+        gpt = GPT(path = gpt2_pretrained_path, vocab = gpt2_word_list, word2id = gpt2_tokenizer.get_vocab(), device = config.GPT_DEVICE)
+        features = LMFeatures(model = gpt, layer = 4, context_words = config.GPT_WORDS)
     
     # Prepare stimulus + response data
-    em_cp = np.load("semantic-decoding/models/S1/encoding_model_perceived.npz")
+    em_cp = np.load(os.path.join(config.MODEL_DIR, args.subject, f"encoder_{args.gpt}_{args.stimulus}.npz"))
     rstim, tr_stats, word_stats = get_stim(stories, features)
     rresp = get_resp(args.subject, stories, stack = True)[:, em_cp["voxels"]]
     train_dataset = FMRIDataset(rstim, rresp)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=False)
 
-    print(f"Beginning Evaluation with {args.model}")
-    if args.model == "BASE":
+    print(f"Beginning Evaluation with {args.variant}")
+    if args.variant == "BASE":
         rstim = torch.from_numpy(rstim).float().to(DEVICE)
         rresp = torch.from_numpy(rresp).float().to(DEVICE)
 
@@ -87,33 +108,46 @@ if __name__ == "__main__":
         presp = torch.matmul(rstim, weights)
 
         # calculate error
-        mse = calc_loss(presp, rresp)
+        residual = presp - rresp
+
+        mse = torch.square(residual)
+        mse  = torch.mean(mse, dim=1)
+        mse = torch.mean(mse)
         print("Overall MSE (voxel-wise):", mse.item())
 
-    elif args.model == "MLP":
+        mae = torch.abs(residual)
+        mae  = torch.mean(mae, dim=1)
+        mae = torch.mean(mae)
+        print("Overall MAE (voxel-wise):", mae.item())
+
+    elif args.variant == "MLP":
         model = MLP(3072, config.VOXELS).to(DEVICE)
 
         # Load weights
-        model_state_dict = torch.load(args.load_path, map_location=DEVICE)
+        model_state_dict = torch.load(args.mlp_path, map_location=DEVICE)
         if "module." in list(model_state_dict.keys())[0]:
             model_state_dict = {k.replace("module.", ""): v for k, v in model_state_dict.items()}
         model.load_state_dict(model_state_dict)
 
-        residuals = []
+        residuals_2 = []
+        residuals_a = []
         model.eval()
         for idx, batch in enumerate(train_loader):
             rstim, rresp = batch[0].to(DEVICE), batch[1].to(DEVICE)
             presp = model(rstim)
             
             # calculate error
-            res = torch.square(presp - rresp)
-            res = torch.mean(res, dim=1)
-            residuals.append(res)
+            res = presp - rresp
+            r2 = torch.square(res)
+            ra = torch.abs(res)
+            residuals_2.append(torch.mean(r2, dim=1))
+            residuals_a.append(torch.mean(ra, dim=1))
 
-        mse = torch.mean(torch.cat(residuals))
+        residuals_2 = torch.cat(residuals_2)
+        mse = torch.mean(residuals_2)
         print("Overall MSE (voxel-wise):", mse.item())
+        residuals_a = torch.cat(residuals_a)
+        mae = torch.mean(residuals_a)
+        print("Overall MAE (voxel-wise):", mae.item())
 
-    else:
-        # WIP
-        pass
     

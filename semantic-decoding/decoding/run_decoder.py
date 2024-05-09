@@ -132,7 +132,10 @@ if __name__ == "__main__":
     decoder = Decoder(word_times, config.WIDTH)
     sm = StimulusModel(lanczos_mat, tr_stats, word_stats[0], device = config.SM_DEVICE)
     for sample_index in range(len(word_times)):
-        trs = affected_trs(decoder.first_difference(), sample_index, lanczos_mat)
+        # print(f'sample_index: {sample_index}')
+        first_diff = decoder.first_difference()
+        # print(f'diff: {first_diff}')
+        trs = affected_trs(first_diff, sample_index, lanczos_mat)
         ncontext = decoder.time_window(sample_index, config.LM_TIME, floor = 5)
         beam_nucs = lm.beam_propose(decoder.beam, ncontext)
         for c, (hyp, nextensions) in enumerate(decoder.get_hypotheses()):

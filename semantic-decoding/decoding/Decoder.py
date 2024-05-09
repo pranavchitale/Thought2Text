@@ -14,6 +14,8 @@ class Decoder(object):
         """get first index where hypotheses on the beam differ
         """
         words_arr = np.array([hypothesis.words for hypothesis in self.beam])
+        # if words_arr.shape[0] == 0:
+        #     words_arr = np.empty((1, 0), dtype=np.float64)
         if words_arr.shape[0] == 1: return words_arr.shape[1]
         for index in range(words_arr.shape[1]): 
             if len(set(words_arr[:, index])) > 1: return index

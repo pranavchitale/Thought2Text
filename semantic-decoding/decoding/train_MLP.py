@@ -6,8 +6,8 @@ Author(s):
 - Ashutosh Tiwari (ashutosh.tiwari@stonybrook.edu)
 
 Usage:
-$ python semantic-decoding/decoding/train_MLP.py --stimulus BASE --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5 > semantic-decoding/exps/MLP_BASE_1e-3_1e-5.txt
-$ python semantic-decoding/decoding/train_MLP.py --stimulus GPT2 --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5 > semantic-decoding/exps/MLP_GPT2_1e-3_1e-5.txt
+$ python semantic-decoding/decoding/train_MLP.py --stimulus BASE --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5
+$ python semantic-decoding/decoding/train_MLP.py --stimulus GPT2 --num_epochs 20 --batch_size 256 --lr 1e-3 --wd 1e-5
 
 System Requirements:
 - Operating System: Ubuntu
@@ -28,6 +28,7 @@ import numpy as np
 import json
 import argparse
 import torch, tqdm
+import transformers
 from matplotlib import pyplot as plt
 
 import config
@@ -99,10 +100,19 @@ if __name__ == '__main__':
         stories.extend(sess_to_story[str(sess)])
 
     # load gpt
-    with open(os.path.join(config.DATA_LM_DIR, args.gpt, "vocab.json"), "r") as f:
-        gpt_vocab = json.load(f)
-    gpt = GPT(path = os.path.join(config.DATA_LM_DIR, args.gpt, "model"), vocab = gpt_vocab, device = config.GPT_DEVICE)
-    features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
+    if args.stimulus == 'BASE':
+        with open(os.path.join(config.DATA_LM_DIR, args.gpt, "vocab.json"), "r") as f:
+            gpt_vocab = json.load(f)
+        gpt = GPT(path = os.path.join(config.DATA_LM_DIR, args.gpt, "model"), vocab = gpt_vocab, device = config.GPT_DEVICE)
+        features = LMFeatures(model = gpt, layer = config.GPT_LAYER, context_words = config.GPT_WORDS)
+    else:
+        gpt2_tokenizer = transformers.GPT2Tokenizer.from_pretrained('distilgpt2', cache_dir='cache/')
+        gpt2_word_list = [None] * len(gpt2_tokenizer)
+        for token, idx, in gpt2_tokenizer.get_vocab().items():
+            gpt2_word_list[idx] = token
+        gpt2_pretrained_path = 'gpt2/models/gpt2_200_0.0005_1e-05' # change this path if needed
+        gpt = GPT(path = gpt2_pretrained_path, vocab = gpt2_word_list, word2id = gpt2_tokenizer.get_vocab(), device = config.GPT_DEVICE)
+        features = LMFeatures(model = gpt, layer = 4, context_words = config.GPT_WORDS)
 
     # load stimulus + responses data
     em_cp = np.load(os.path.join(config.MODEL_DIR, args.subject, f"encoder_{args.gpt}_{args.stimulus}.npz"))
@@ -145,6 +155,6 @@ if __name__ == '__main__':
     # Save Model
     save_location = os.path.join(config.MODEL_DIR, args.subject)
     os.makedirs(save_location, exist_ok = True)
-    torch.save(model.state_dict(), os.path.join(save_location, f'MLP_{args.stimulus}_{args.lr}_{args.wd}.pth'))
+    torch.save(model.state_dict(), os.path.join(save_location, f'MLP_{args.stimulus}_{args.num_epochs}_{args.lr}_{args.wd}.pth'))
     
 

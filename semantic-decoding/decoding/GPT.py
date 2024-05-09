@@ -10,7 +10,7 @@ class GPT():
         self.device = device
         self.model = AutoModelForCausalLM.from_pretrained(path).eval().to(self.device)
         self.vocab = vocab
-        self.word2id = word2id if word2id != None else {w : i for i, w in enumerate(self.vocab)}
+        self.word2id = word2id if word2id is not None else {w : i for i, w in enumerate(self.vocab)}
         # self.UNK_ID = self.word2id['<unk>']
         try:
             self.UNK_ID = self.word2id['<unk>']
